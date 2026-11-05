@@ -58,6 +58,9 @@ h1,h2,h3{font-family:'Inter Display','Inter',sans-serif;font-weight:800;letter-s
 /* ---------- главный экран ---------- */
 .build{position:relative;height:620vh}
 .stage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;background:#cfe3f3}
+.vbox{position:absolute;inset:0}
+.replay{display:none}
+.intro .mob{display:none}
 .stage video,.stage .night{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:42% 50%}
 .stage .night{opacity:0}
 .shade{position:absolute;inset:0;pointer-events:none;
@@ -475,9 +478,33 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;bac
   .fcount{margin:0;text-align:center;font-size:13px}
   /* главный экран на телефоне: один экран, ролик играет сам */
   .build.m{height:auto}
-  .build.m .stage{position:relative}
+  .build.m .stage{position:relative;height:auto;background:var(--slivki);display:grid;grid-template-columns:100%;grid-template-areas:'intro' 'vbox' 'slot';
+    padding:calc(var(--top) + 18px) var(--pad) 26px;gap:18px;overflow:visible}
+  .build.m .vbox{position:relative;grid-area:vbox;aspect-ratio:16/9;border-radius:16px;overflow:hidden;box-shadow:0 14px 34px rgba(59,42,31,.18)}
+  .build.m .stage video,.build.m .stage .night{object-position:50% 50%}
   .build.m .night{transition:opacity 1.4s ease}
-  .build.m .intro,.build.m .tint.i{transition:opacity .8s ease}
+  .build.m .shade,.build.m .tint{display:none}
+  .build.m .intro{position:static;grid-area:intro;color:var(--kofe);text-shadow:none;opacity:1!important}
+  .build.m .intro h1{font-size:34px;margin:12px 0 10px}
+  .build.m .intro p{font-size:15px;color:var(--muted)}
+  .build.m .intro .dsk{display:none}.build.m .intro .mob{display:inline}
+  .build.m .kick{color:var(--oreh)}
+  .build.m .rail{display:none}
+  .build.m .card{position:static;grid-area:slot;width:auto;box-shadow:none;border:1px solid var(--line);background:var(--paper);backdrop-filter:none;transform:none;opacity:1}
+  .build.m.ended .card{display:none}
+  .build.m .final{position:static;grid-area:slot;padding:0;color:var(--kofe);text-shadow:none;display:none;opacity:1;pointer-events:auto}
+  .build.m.ended .final{display:block;animation:fi .6s}
+  .build.m .final h2{font-size:28px;margin:10px 0 10px}
+  .build.m .final .kick{color:var(--oreh)}
+  .build.m .final .fb{display:block}
+  .build.m .final p{color:var(--muted);font-size:15px}
+  .build.m .final .btn.light{background:var(--kofe);color:var(--slivki)}
+  .build.m .final .btn.ghost{border-color:var(--kofe);color:var(--kofe)}
+  .build.m .facts{margin-top:20px}
+  .build.m .facts div{opacity:1;color:var(--muted)}
+  .build.m .facts b{color:var(--kofe)}
+  .build.m .replay{display:block;position:absolute;right:10px;bottom:10px;padding:8px 12px;border-radius:10px;background:rgba(251,247,241,.92);font-size:13px;font-weight:600;color:var(--kofe)}
+  .build.m .replay[hidden]{display:none}
   .grid{grid-template-columns:1fr;gap:16px}
   .why,.steps{grid-template-columns:1fr}
   .wi,.steps li{padding:22px}

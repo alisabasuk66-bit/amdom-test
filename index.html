@@ -13,7 +13,7 @@
 <meta property="og:image" content="media/poster.jpg">
 <link rel="icon" type="image/png" href="media/favicon.png">
 <link rel="preload" href="fonts/InterDisplay-ExtraBold.woff" as="font" type="font/woff" crossorigin>
-<link rel="stylesheet" href="css/style.css?v=3">
+<link rel="stylesheet" href="css/style.css?v=4">
 </head>
 <body>
 
@@ -39,16 +39,19 @@
 <!-- =============== ГЛАВНЫЙ ЭКРАН: ДОМ СОБИРАЕТСЯ =============== -->
 <section class="build" id="build">
   <div class="stage">
-    <video id="vid" muted playsinline preload="auto" poster="media/poster.jpg?v=2"></video>
-    <img class="night" id="night" src="media/evening.jpg" alt="">
-    <div class="shade"></div>
-    <div class="tint i" id="tintI"></div>
-    <div class="tint f" id="tintF"></div>
+    <div class="vbox">
+      <video id="vid" muted playsinline preload="auto" poster="media/poster.jpg?v=2"></video>
+      <img class="night" id="night" src="media/evening.jpg" alt="">
+      <div class="shade"></div>
+      <div class="tint i" id="tintI"></div>
+      <div class="tint f" id="tintF"></div>
+      <button class="replay" id="replay" hidden>↻ Смотреть ещё раз</button>
+    </div>
 
     <div class="intro" id="intro">
       <div class="kick"><i></i>Нижний Новгород</div>
       <h1>Каркасные дома<br>под ключ</h1>
-      <p>Листайте вниз и посмотрите, как мы строим ваш дом: от фундамента до тёплого света в окнах.</p>
+      <p><span class="dsk">Листайте вниз и посмотрите</span><span class="mob">Посмотрите</span>, как мы строим ваш дом: от фундамента до тёплого света в окнах.</p>
     </div>
     <div class="hint" id="hint"><div class="m"></div>Листайте</div>
 
@@ -453,6 +456,6 @@
 </div>
 
 <script src="js/data.js?v=2"></script>
-<script src="js/app.js?v=3"></script>
+<script src="js/app.js?v=4"></script>
 </body>
 </html>

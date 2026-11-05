@@ -74,25 +74,23 @@ if (small) {
   build.classList.add('m');
   vid.src = VSRC; vid.muted = true; vid.setAttribute('muted', ''); vid.preload = 'auto';
   hint.style.display = 'none';
+  const replay = $('#replay');
   const showFinal = () => {
-    night.style.opacity = 1; tintF.classList.add('on'); fin.classList.add('on');
-    card.classList.remove('on'); rail.classList.remove('on');
-    intro.style.opacity = 0; tintI.style.opacity = 0;
+    night.style.opacity = 1; fin.classList.add('on'); build.classList.add('ended'); replay.hidden = false;
   };
+  replay.addEventListener('click', () => {
+    build.classList.remove('ended'); fin.classList.remove('on'); night.style.opacity = 0; replay.hidden = true;
+    stageIdx = -1; vid.currentTime = 0; setStage(0); const pr = vid.play(); if (pr && pr.catch) pr.catch(showFinal);
+  });
   vid.addEventListener('timeupdate', () => {
-    const t = vid.currentTime, started = t > 0.5;
-    intro.style.opacity = started ? 0 : 1; tintI.style.opacity = started ? 0 : 1;
-    card.classList.toggle('on', started && !vid.ended); rail.classList.toggle('on', started && !vid.ended);
-    bar.style.width = Math.min(100, t / DUR * 100) + '%';
-    setStage(t);
+    setStage(vid.currentTime);
   });
   vid.addEventListener('ended', showFinal);
   const tryPlay = () => { const pr = vid.play(); if (pr && pr.catch) pr.catch(() => setTimeout(showFinal, 600)); };
   // 1,5 секунды показываем заголовок на фоне свай, потом запускаем стройку
   setTimeout(() => { if (vid.readyState >= 2) tryPlay(); else vid.addEventListener('canplay', tryPlay, { once: true }); }, 1500);
-  setStage(0);
-  const onScrollM = () => { topbar.classList.toggle('solid', build.getBoundingClientRect().bottom <= innerHeight * 0.2); };
-  addEventListener('scroll', onScrollM, { passive: true }); onScrollM();
+  card.classList.add('on'); setStage(0);
+  topbar.classList.add('solid');
 } else {
   /* КОМПЬЮТЕР: дом собирается при прокрутке.
      Ролик загружаем целиком в память: так перемотка плавная на любом хостинге.
