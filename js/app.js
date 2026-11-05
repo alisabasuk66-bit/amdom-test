@@ -70,27 +70,38 @@ function setStage(t) {
 }
 
 if (small) {
-  /* ТЕЛЕФОН: ролик просто проигрывается сам, один экран, без долгой прокрутки */
+  /* ТЕЛЕФОН: тот же эффект прокрутки, но картинка целиком, не растянута.
+     Вместо видео листаются кадры (media/frames), так надёжнее на iPhone. */
   build.classList.add('m');
-  vid.src = VSRC; vid.muted = true; vid.setAttribute('muted', ''); vid.preload = 'auto';
-  hint.style.display = 'none';
-  const replay = $('#replay');
-  const showFinal = () => {
-    night.style.opacity = 1; fin.classList.add('on'); build.classList.add('ended'); replay.hidden = false;
-  };
-  replay.addEventListener('click', () => {
-    build.classList.remove('ended'); fin.classList.remove('on'); night.style.opacity = 0; replay.hidden = true;
-    stageIdx = -1; vid.currentTime = 0; setStage(0); const pr = vid.play(); if (pr && pr.catch) pr.catch(showFinal);
-  });
-  vid.addEventListener('timeupdate', () => {
-    setStage(vid.currentTime);
-  });
-  vid.addEventListener('ended', showFinal);
-  const tryPlay = () => { const pr = vid.play(); if (pr && pr.catch) pr.catch(() => setTimeout(showFinal, 600)); };
-  // 1,5 секунды показываем заголовок на фоне свай, потом запускаем стройку
-  setTimeout(() => { if (vid.readyState >= 2) tryPlay(); else vid.addEventListener('canplay', tryPlay, { once: true }); }, 1500);
-  card.classList.add('on'); setStage(0);
   topbar.classList.add('solid');
+  vid.removeAttribute('poster'); vid.style.display = 'none';
+  const NF = 81, frames = [], cv = document.createElement('canvas');
+  cv.className = 'frames'; cv.width = 720; cv.height = 406;
+  vid.parentNode.insertBefore(cv, vid);
+  const ctx = cv.getContext('2d');
+  const fsrc = i => 'media/frames/f' + String(i + 1).padStart(3, '0') + '.jpg';
+  let shown = -1, want = 0;
+  const draw = i => {
+    // если нужный кадр ещё грузится, показываем ближайший загруженный
+    let k = i; while (k > 0 && !(frames[k] && frames[k].done)) k--;
+    if (!(frames[k] && frames[k].done) || k === shown) return;
+    ctx.drawImage(frames[k], 0, 0, cv.width, cv.height); shown = k;
+  };
+  const load = i => { const im = new Image(); im.onload = () => { im.done = true; if (Math.abs(i - want) < 3 || shown < 0) { shown = -1; draw(want); } }; im.src = fsrc(i); frames[i] = im; };
+  load(0); for (let i = 1; i < NF; i++) load(i);
+  const onScrollM = () => {
+    const r = build.getBoundingClientRect(), total = build.offsetHeight - innerHeight;
+    const p = Math.min(1, Math.max(0, -r.top / total));
+    const b = Math.min(1, Math.max(0, (p - 0.04) / 0.76));
+    want = Math.round(b * (NF - 1)); draw(want);
+    setStage(b * DUR);
+    night.style.opacity = Math.min(1, Math.max(0, (p - 0.80) / 0.1));
+    const end = p > 0.88;
+    build.classList.toggle('ended', end); fin.classList.toggle('on', end);
+    hint.style.opacity = p < 0.02 ? 1 : 0;
+  };
+  card.classList.add('on'); setStage(0);
+  addEventListener('scroll', onScrollM, { passive: true }); addEventListener('resize', onScrollM); onScrollM();
 } else {
   /* КОМПЬЮТЕР: дом собирается при прокрутке.
      Ролик загружаем целиком в память: так перемотка плавная на любом хостинге.
