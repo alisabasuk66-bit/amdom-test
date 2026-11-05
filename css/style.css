@@ -164,6 +164,7 @@ h1,h2,h3{font-family:'Inter Display','Inter',sans-serif;font-weight:800;letter-s
 .lead-box{width:min(460px,100%);padding:34px 30px 30px}
 .hm{display:grid;grid-template-columns:1.15fr 1fr;grid-template-areas:'g i' 'p i';grid-template-rows:auto 1fr}
 .gal{grid-area:g}.plan{grid-area:p}.info{grid-area:i}
+.hm > *{min-width:0}
 .gal{position:relative;background:#e6e0d6;min-height:100%}
 .gal-main{position:relative;aspect-ratio:4/3;overflow:hidden;background:#dfe9d8}
 .gal-main img{width:100%;height:100%;object-fit:cover}
@@ -214,6 +215,18 @@ h1,h2,h3{font-family:'Inter Display','Inter',sans-serif;font-weight:800;letter-s
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-bottom:28px}
 .stats div{padding:24px;border-radius:var(--r);background:var(--kofe);color:var(--slivki)}
 .stats b{display:block;font-family:'Inter Display';font-weight:800;font-size:44px;color:var(--brus)}
+
+/* подзаголовок и тёмная плашка с кнопкой */
+.head .lead{margin-top:14px;font-size:clamp(18px,1.8vw,22px);font-weight:500;color:var(--oreh)}
+.h2b{color:var(--brus)}
+.cta{margin-top:24px;border-radius:22px;background:var(--kofe);color:var(--slivki);padding:clamp(30px,4vw,48px) var(--pad);text-align:center}
+.cta h3{font-size:clamp(24px,2.8vw,34px);margin-bottom:10px}
+.cta p{max-width:560px;margin:0 auto 24px;line-height:1.6;color:rgba(243,236,225,.78)}
+.wi{background:#fff}
+.sec.paper .wi,.sec.paper .steps li{background:#fff}
+/* вопросы по блокам */
+.faqg + .faqg{margin-top:44px}
+.faqg h3{font-size:clamp(20px,2.2vw,26px);margin-bottom:6px;color:var(--oreh)}
 
 /* ---------- комплектации ---------- */
 .ptabs{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}

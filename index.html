@@ -4,16 +4,16 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>АМ ДОМ — каркасные дома под ключ в Нижнем Новгороде</title>
-<meta name="description" content="Строим каркасные дома под ключ. 15 готовых проектов от 28 до 111 м², три комплектации, гарантия 5 лет, поэтапная оплата. Нижний Новгород.">
+<meta name="description" content="Строим каркасные дома под ключ в Нижнем Новгороде. Каталог проектов, три комплектации, гарантия 5 лет, оплата по этапам, сроки 3–4 месяца.">
 <!-- ТЕСТОВАЯ ВЕРСИЯ: строку ниже удалить при запуске на амдом.рф, иначе сайт не попадёт в поиск -->
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#3B2A1F">
 <meta property="og:title" content="АМ ДОМ — каркасные дома под ключ">
-<meta property="og:description" content="15 готовых проектов от 28 до 111 м², гарантия 5 лет, поэтапная оплата.">
+<meta property="og:description" content="Каталог проектов, гарантия 5 лет, оплата по этапам.">
 <meta property="og:image" content="media/poster.jpg">
 <link rel="icon" type="image/png" href="media/favicon.png">
 <link rel="preload" href="fonts/InterDisplay-ExtraBold.woff" as="font" type="font/woff" crossorigin>
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/style.css?v=2">
 </head>
 <body>
 
@@ -21,7 +21,7 @@
 <header class="top" id="top">
   <a class="logo" href="#" aria-label="АМ ДОМ, на главную"><img src="media/logo.png" alt="АМ ДОМ"></a>
   <nav class="menu" id="menu">
-    <a href="#catalog">Проекты</a>
+    <a href="#catalog">Каталог</a>
     <a href="#packages">Комплектации</a>
     <a href="#tech">Технология</a>
     <a href="#mortgage">Ипотека</a>
@@ -39,7 +39,7 @@
 <!-- =============== ГЛАВНЫЙ ЭКРАН: ДОМ СОБИРАЕТСЯ =============== -->
 <section class="build" id="build">
   <div class="stage">
-    <video id="vid" muted playsinline preload="auto" poster="media/poster.jpg"></video>
+    <video id="vid" muted playsinline preload="auto" poster="media/poster.jpg?v=2"></video>
     <img class="night" id="night" src="media/evening.jpg" alt="">
     <div class="shade"></div>
     <div class="tint i" id="tintI"></div>
@@ -66,9 +66,9 @@
       </div>
       <div class="fb">
         <div>
-          <p>15 готовых проектов от 28 до 111 м². Планировку бесплатно адаптируем под вашу семью.</p>
+          <p>Планировку бесплатно адаптируем под вашу семью.</p>
           <div class="row">
-            <a class="btn light" href="#catalog"><span class="dot"></span>Смотреть проекты</a>
+            <a class="btn light" href="#catalog"><span class="dot"></span>Выбрать дом</a>
             <a class="btn ghost" href="#calc">Рассчитать стоимость</a>
           </div>
         </div>
@@ -87,10 +87,9 @@
   <div class="wrap">
     <div class="head">
       <div>
-        <div class="eyebrow">Каталог</div>
-        <h2>Проекты домов</h2>
+        <div class="eyebrow">Выбрать дом</div>
+        <h2>Каталог</h2>
       </div>
-      <p>15 проектов от 28 до 111 м². Любой можно адаптировать под ваш участок и семью, перепланировка бесплатно.</p>
     </div>
 
     <div class="filters" id="filters">
@@ -131,24 +130,30 @@
   <div class="wrap">
     <div class="head">
       <div>
-        <div class="eyebrow">Почему АМ ДОМ</div>
-        <h2>Строим так, как строили бы себе</h2>
+        <div class="eyebrow">Почему выбирают АМ ДОМ</div>
+        <h2>Строим дома, в которых хочется жить</h2>
+        <p class="lead">Ваш дом начинается с нас</p>
       </div>
     </div>
     <div class="stats" id="stats" hidden></div>
     <div class="why">
-      <div class="wi"><svg viewBox="0 0 40 40"><path d="M20 4l13 5v10c0 9-6 15-13 17C13 34 7 28 7 19V9z"/><path d="M14 20l4 4 8-9"/></svg>
-        <h3>Гарантия 5 лет</h3><p>На все строительные работы. Прописываем в договоре.</p></div>
-      <div class="wi"><svg viewBox="0 0 40 40"><rect x="6" y="9" width="28" height="24" rx="3"/><path d="M6 16h28M13 5v7M27 5v7M12 23h5M12 28h9"/></svg>
-        <h3>Поэтапная оплата</h3><p>Платите за каждый этап по мере стройки. Суммы и сроки в договоре.</p></div>
-      <div class="wi"><svg viewBox="0 0 40 40"><path d="M6 6h28v28H6zM6 20h14M20 6v20M26 20v14"/></svg>
-        <h3>Перепланировка бесплатно</h3><p>Адаптируем любой проект под вашу семью и участок.</p></div>
-      <div class="wi"><svg viewBox="0 0 40 40"><circle cx="17" cy="17" r="10"/><path d="M24.5 24.5L34 34M13 17l3 3 5-6"/></svg>
-        <h3>Технадзор на каждом этапе</h3><p>После каждого этапа подписываем промежуточный акт.</p></div>
-      <div class="wi"><svg viewBox="0 0 40 40"><path d="M5 30h30M8 30V14l12-8 12 8v16"/><path d="M14 30V19h12v11M14 24h12"/></svg>
-        <h3>Сухая строганая доска</h3><p>Пиломатериал камерной сушки: стены не ведёт, нет щелей и скрипов.</p></div>
-      <div class="wi"><svg viewBox="0 0 40 40"><path d="M20 5v30M14 11l6-6 6 6M14 29l6 6 6-6"/><path d="M8 20h24" stroke-dasharray="2 3"/></svg>
-        <h3>Потолки 2,7 м</h3><p>На первом этаже во всех проектах. В доме просторно и много воздуха.</p></div>
+      <div class="wi"><svg viewBox="0 0 40 40"><path d="M6 19L20 7l14 12"/><path d="M10 16v17h20V16"/><path d="M17 33v-9h6v9"/></svg>
+        <h3>Архитектура с характером</h3><p>15 проектов, в которых эстетика встречается с продуманной планировкой.</p></div>
+      <div class="wi"><svg viewBox="0 0 40 40"><rect x="9" y="5" width="22" height="30" rx="3"/><path d="M14 13h12M14 19h12M14 25h7"/></svg>
+        <h3>Прозрачная смета</h3><p>Вы понимаете состав работ, стоимость и условия ещё до начала строительства.</p></div>
+      <div class="wi"><svg viewBox="0 0 40 40"><path d="M7 12h24a3 3 0 0 1 3 3v15a3 3 0 0 1-3 3H9a3 3 0 0 1-3-3V11a4 4 0 0 1 4-4h18"/><path d="M34 19h-7a3 3 0 0 0 0 6h7"/></svg>
+        <h3>Оплата по этапам</h3><p>Четыре платежа: 20% / 40% / 20% / 20%. Без полной предоплаты.</p></div>
+      <div class="wi"><svg viewBox="0 0 40 40"><rect x="4" y="15" width="32" height="10" rx="2" transform="rotate(-40 20 20)"/><path d="M13 21l3 3M17 17l2 2M21 13l3 3M25 9l2 2"/></svg>
+        <h3>Дом под вашу жизнь</h3><p>Подбираем проект и обсуждаем решения под потребности вашей семьи.</p></div>
+      <div class="wi"><svg viewBox="0 0 40 40"><rect x="6" y="9" width="28" height="25" rx="3"/><path d="M6 16h28M13 5v7M27 5v7M14 25l4 4 8-8"/></svg>
+        <h3>Планируем сроки заранее</h3><p>Ориентир строительства 3–4 месяца с учётом особенностей проекта.</p></div>
+      <div class="wi"><svg viewBox="0 0 40 40"><path d="M20 33S6 24.5 6 15a7 7 0 0 1 14-2 7 7 0 0 1 14 2c0 9.5-14 18-14 18z"/><path d="M14 19l4 4 8-8"/></svg>
+        <h3>Забота в деталях</h3><p>Объясняем, слышим пожелания и сопровождаем на пути к своему дому.</p></div>
+    </div>
+    <div class="cta">
+      <h3>Ваш дом начинается с выбора.</h3>
+      <p>Посмотрите проекты АМ ДОМ и найдите тот, в котором захочется жить.</p>
+      <a class="btn light" href="#catalog"><span class="dot"></span>Смотреть проекты домов</a>
     </div>
   </div>
 </section>
@@ -273,17 +278,23 @@
     <div class="head">
       <div>
         <div class="eyebrow">Как мы работаем</div>
-        <h2>От заявки до ключей</h2>
+        <h2>Ваш дом начинается здесь</h2>
       </div>
+      <p>Берём на себя организацию строительства, а вы понимаете, что происходит на каждом этапе.</p>
     </div>
     <ol class="steps">
-      <li><b>01</b><h3>Заявка</h3><p>Оставляете заявку или звоните. Обсуждаем, какой дом нужен и где участок.</p></li>
-      <li><b>02</b><h3>Выбор проекта</h3><p>Подбираем проект из каталога или адаптируем планировку под вас. Бесплатно.</p></li>
-      <li><b>03</b><h3>Смета</h3><p>Считаем точную стоимость с учётом участка, фундамента и комплектации.</p></li>
-      <li><b>04</b><h3>Договор</h3><p>Фиксируем цену, сроки, этапы и гарантию 5 лет.</p></li>
-      <li><b>05</b><h3>Строительство</h3><p>Строим по этапам, технадзор на каждом. Оплата поэтапно.</p></li>
-      <li><b>06</b><h3>Сдача дома</h3><p>Принимаете дом, подписываем акт и передаём ключи.</p></li>
+      <li><b>01</b><h3>Знакомимся</h3><p>Вы рассказываете о доме мечты, участке и пожеланиях. Мы слушаем и предлагаем решения.</p></li>
+      <li><b>02</b><h3>Выбираем ваш дом</h3><p>Подбираем проект из каталога и обсуждаем планировку под ваш образ жизни.</p></li>
+      <li><b>03</b><h3>Считаем всё заранее</h3><p>Готовим смету, согласовываем комплектацию, стоимость и состав работ.</p></li>
+      <li><b>04</b><h3>Закрепляем договорённости</h3><p>Подписываем договор, определяем сроки, этапы строительства и график оплаты.</p></li>
+      <li><b>05</b><h3>Строим с заботой</h3><p>Организуем строительство, контролируем этапы и информируем вас о ходе работ.</p></li>
+      <li><b>06</b><h3>Передаём ваш дом</h3><p>Вместе осматриваем результат, оформляем приёмку и передаём ключи.</p></li>
     </ol>
+    <div class="cta">
+      <h3>До своего дома — всего один шаг.</h3>
+      <p>Расскажите нам, какой дом вы хотите. Мы поможем выбрать проект и рассчитать строительство.</p>
+      <a class="btn light" href="#quiz"><span class="dot"></span>Подобрать свой дом</a>
+    </div>
   </div>
 </section>
 
@@ -333,7 +344,7 @@
 <!-- =============== ВОПРОСЫ =============== -->
 <section class="sec" id="faq">
   <div class="wrap narrow">
-    <div class="head"><div><div class="eyebrow">Вопросы и ответы</div><h2>Частые вопросы</h2></div></div>
+    <div class="head"><div><div class="eyebrow">Вопросы и ответы</div><h2>Всё, что вы хотите знать о строительстве дома</h2></div></div>
     <div class="faq" id="faqlist"></div>
   </div>
 </section>
@@ -344,7 +355,7 @@
     <div class="contacts">
       <div>
         <div class="eyebrow">Контакты</div>
-        <h2>Приезжайте в офис или напишите нам</h2>
+        <h2>Приезжайте в офис<br><span class="h2b">Оставьте заявку</span></h2>
         <ul class="clist">
           <li><span>Телефон</span><a data-phone href="#"></a></li>
           <li><span>Почта</span><a data-email href="#"></a></li>
@@ -357,7 +368,7 @@
         </div>
       </div>
       <form class="form" data-form data-topic="Заявка из блока «Контакты»">
-        <h3>Оставьте заявку</h3>
+        <h3>Заявка на консультацию</h3>
         <p class="muted">Перезвоним, ответим на вопросы и посчитаем смету.</p>
         <input name="name" placeholder="Ваше имя" autocomplete="name" required>
         <input name="phone" type="tel" placeholder="+7 (___) ___-__-__" autocomplete="tel" required>
@@ -381,7 +392,7 @@
     <div class="foot-top">
       <a class="logo" href="#"><img src="media/logo.png" alt="АМ ДОМ"></a>
       <nav>
-        <a href="#catalog">Проекты</a><a href="#packages">Комплектации</a><a href="#tech">Технология</a>
+        <a href="#catalog">Каталог</a><a href="#packages">Комплектации</a><a href="#tech">Технология</a>
         <a href="#calc">Калькулятор</a><a href="#mortgage">Ипотека</a><a href="#faq">Вопросы</a><a href="#contacts">Контакты</a>
       </nav>
       <div class="soc">
@@ -441,7 +452,7 @@
   <button class="btn" id="cookie-ok">Хорошо</button>
 </div>
 
-<script src="js/data.js"></script>
-<script src="js/app.js"></script>
+<script src="js/data.js?v=2"></script>
+<script src="js/app.js?v=2"></script>
 </body>
 </html>

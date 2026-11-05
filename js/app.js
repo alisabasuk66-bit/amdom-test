@@ -38,15 +38,15 @@ $$('#menu a').forEach(a => a.addEventListener('click', () => { topbar.classList.
    ========================================================== */
 const STAGES = [
   [0.0, 'Фундамент', 'Винтовые сваи 89/108 мм, глубина 2,5 м, оголовки 200×200. Или ж/б фундамент, если так нужно по грунту.'],
-  [0.7, 'Обвязка и пол', 'Обвязка из трёх сбитых досок 45×190 мм, лаги перекрытия 45×190, сетка от грызунов.'],
-  [1.5, 'Каркас стен', 'Сухая строганая доска камерной сушки 45×145 мм с шагом 590 мм. Стены не ведёт, нет скрипов и щелей.'],
-  [2.3, 'Утепление', 'Каменная вата ТЕХНОНИКОЛЬ 200 мм в стенах и перекрытиях. Не горит и не оседает со временем.'],
-  [3.0, 'Ветро- и пароизоляция', 'Снаружи мембрана Изоспан АМ, изнутри пароизоляция Изоспан RS. Стыки проклеены лентой.'],
+  [0.9, 'Обвязка и пол', 'Обвязка из трёх сбитых досок 45×190 мм, лаги перекрытия 45×190, сетка от грызунов.'],
+  [1.4, 'Каркас стен', 'Сухая строганая доска камерной сушки 45×145 мм с шагом 590 мм. Стены не ведёт, нет скрипов и щелей.'],
+  [2.8, 'Утепление', 'Каменная вата ТЕХНОНИКОЛЬ 200 мм в стенах и перекрытиях. Не горит и не оседает со временем.'],
+  [3.3, 'Ветро- и пароизоляция', 'Снаружи мембрана Изоспан АМ, изнутри пароизоляция Изоспан RS. Стыки проклеены лентой.'],
   [3.8, 'Стропильная система', 'Стропила 45×195 мм с шагом 590 мм, контробрешётка для вентзазора.'],
-  [5.4, 'Наружная обшивка', 'Сайдинг Docke «Блок-Хаус» под дерево, любой цвет на выбор.'],
-  [6.3, 'Кровля', 'Металлочерепица 0,5 мм с покрытием Satin, водосточная система.'],
-  [7.2, 'Окна и двери', 'Окна BRUSBOX 60 мм с тройным стеклом. Входная дверь с терморазрывом, 100 мм.'],
-  [8.0, 'Цоколь', 'Отделка цоколя HAUBERK ТЕХНОНИКОЛЬ и металлический отлив.'],
+  [5.8, 'Наружная обшивка', 'Сайдинг Docke «Блок-Хаус» под дерево, любой цвет на выбор.'],
+  [6.8, 'Кровля', 'Металлочерепица 0,5 мм с покрытием Satin, водосточная система.'],
+  [7.8, 'Окна и двери', 'Окна BRUSBOX 60 мм с тройным стеклом. Входная дверь с терморазрывом, 100 мм.'],
+  [8.3, 'Цоколь', 'Отделка цоколя HAUBERK ТЕХНОНИКОЛЬ и металлический отлив.'],
   [8.8, 'Терраса и крыльцо', 'Террасная доска, столбы из клеёного бруса 140×140, ограждения из бруса.']
 ];
 const vid = $('#vid'), night = $('#night'), card = $('#card'), cbody = $('#cbody'), ctitle = $('#ctitle'), ctext = $('#ctext'),
@@ -54,7 +54,7 @@ const vid = $('#vid'), night = $('#night'), card = $('#card'), cbody = $('#cbody
   tintI = $('#tintI'), tintF = $('#tintF');
 const small = matchMedia('(max-width:760px)').matches;
 const h264 = vid.canPlayType('video/mp4; codecs="avc1.42E01E"');
-const VSRC = !h264 ? 'media/build_960.webm' : (small ? 'media/build_960.mp4' : 'media/build_1280.mp4');
+const VSRC = !h264 ? 'media/build_960.webm?v=2' : (small ? 'media/build_960.mp4?v=2' : 'media/build_1280.mp4?v=2');
 // Ролик загружаем целиком в память: так перемотка прокруткой плавная на любом хостинге.
 // Если сайт открыт просто файлом с компьютера, подключаем ролик напрямую.
 fetch(VSRC).then(r => { if (!r.ok) throw 0; return r.blob(); })
@@ -183,7 +183,7 @@ function openHouse(id, push) {
       '<ul class="feat">' + h.features.map(f => '<li>' + esc(f).replace(/ м²/g, '\u00a0м²') + '</li>').join('') + '</ul>' +
       '<div class="txt">' + h.text.map(t => '<p>' + esc(t) + '</p>').join('') + '</div>' +
       '<div class="pk" id="h-pk">' + pk.map((p, i) => '<label><input type="radio" name="hpk" value="' + i + '"' + (i ? '' : ' checked') + '><span class="nm"><b>' + p.name + '</b><small>' + p.short + '</small></span><span class="pp">от ' + rub(h.price[i]) + '</span></label>').join('') + '</div>' +
-      '<div class="days">Срок строительства: <b>от ' + h.days + ' дней</b></div>' +
+      '<div class="days">Срок строительства: <b>' + S.buildTerm + '</b>. Оплата в четыре этапа: 20% / 40% / 20% / 20%</div>' +
       '<div class="row"><button class="btn" id="h-lead"><span class="dot"></span>Получить смету</button><button class="btn line" id="h-calc">Рассчитать с ипотекой</button></div>' +
     '</div>';
   // галерея
@@ -316,7 +316,7 @@ function calc() {
   $('#c-name').textContent = h.name + ' · ' + S.packages[pi].name + ' · ' + f.name.toLowerCase();
   $('#c-price').textContent = 'от ' + rub(calcPrice);
   $('#c-m2').textContent = rub(calcPrice / h.area);
-  $('#c-days').textContent = 'от ' + h.days + ' дней';
+  $('#c-days').textContent = S.buildTerm;
 }
 function calcSet(id, pi) { cHouse.value = id; $$('input[name=cpk]')[pi || 0].checked = true; calc(); }
 [cHouse, cPack, cFound].forEach(el => el.addEventListener('change', calc));
@@ -405,7 +405,7 @@ function qRender() {
 qRender();
 
 /* ---------- вопросы ---------- */
-$('#faqlist').innerHTML = S.faq.map(f => '<details><summary>' + esc(f[0]) + '</summary><p>' + esc(f[1]) + '</p></details>').join('');
+$('#faqlist').innerHTML = S.faq.map(g => '<div class="faqg"><h3>' + esc(g[0]) + '</h3>' + g[1].map(f => '<details><summary>' + esc(f[0]) + '</summary><p>' + esc(f[1]) + '</p></details>').join('') + '</div>').join('');
 
 /* ---------- отзывы и цифры (показываются, только если заполнены) ---------- */
 if (S.reviews && S.reviews.length) {
