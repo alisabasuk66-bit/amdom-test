@@ -478,23 +478,24 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;bac
   .fcount{margin:0;text-align:center;font-size:13px}
   /* главный экран на телефоне: один экран, ролик играет сам */
   .build.m{height:380vh}
-  .build.m .stage{position:sticky;top:0;height:100vh;height:100svh;background:var(--slivki);display:grid;grid-template-columns:100%;grid-template-rows:auto auto 1fr;grid-template-areas:'intro' 'vbox' 'slot';align-content:start;
-    padding:calc(var(--top) + 14px) var(--pad) 90px;gap:16px;overflow:hidden}
+  .build.m .stage{position:sticky;top:0;height:100vh;height:100svh;background:var(--slivki);display:grid;grid-template-columns:100%;grid-template-rows:auto auto 1fr;grid-template-areas:'vbox' 'intro' 'slot';align-content:start;
+    padding:var(--top) 0 90px;gap:16px;overflow:hidden}
   .build.m .hint{display:none}
   .build.m canvas.frames{position:absolute;inset:0;width:100%;height:100%;display:block}
-  .build.m .vbox{position:relative;grid-area:vbox;aspect-ratio:16/9;border-radius:16px;overflow:hidden;box-shadow:0 14px 34px rgba(59,42,31,.18)}
+  .build.m .vbox{position:relative;grid-area:vbox;width:100%;aspect-ratio:3/2;border-radius:0;overflow:hidden;box-shadow:none}
+  .build.m canvas.frames{object-fit:cover}
   .build.m .stage video,.build.m .stage .night{object-position:50% 50%}
   .build.m .night{transition:opacity 1.4s ease}
   .build.m .shade,.build.m .tint{display:none}
-  .build.m .intro{position:static;grid-area:intro;color:var(--kofe);text-shadow:none;opacity:1!important}
-  .build.m .intro h1{font-size:34px;margin:12px 0 10px}
+  .build.m .intro{position:static;grid-area:intro;color:var(--kofe);text-shadow:none;opacity:1!important;padding:0 var(--pad);max-width:none}
+  .build.m .intro h1{font-size:30px;margin:8px 0 8px}
   .build.m .intro p{font-size:15px;color:var(--muted)}
   .build.m .intro .dsk{display:inline}.build.m .intro .mob{display:none}
   .build.m .kick{color:var(--oreh)}
   .build.m .rail{display:none}
-  .build.m .card{position:static;grid-area:slot;width:auto;box-shadow:none;border:1px solid var(--line);background:var(--paper);backdrop-filter:none;transform:none;opacity:1}
+  .build.m .card{position:static;grid-area:slot;width:auto;margin:0 var(--pad);box-shadow:none;border:1px solid var(--line);background:var(--paper);backdrop-filter:none;transform:none;opacity:1}
   .build.m.ended .card{display:none}
-  .build.m .final{position:static;grid-area:slot;padding:0;color:var(--kofe);text-shadow:none;display:none;opacity:1;pointer-events:auto}
+  .build.m .final{position:static;grid-area:slot;padding:0 var(--pad);color:var(--kofe);text-shadow:none;display:none;opacity:1;pointer-events:auto}
   .build.m.ended .final{display:block;animation:fi .5s}
   .build.m .final h2{font-size:28px;margin:10px 0 10px}
   .build.m .final .kick{color:var(--oreh)}
