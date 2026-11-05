@@ -70,38 +70,62 @@ function setStage(t) {
 }
 
 if (small) {
-  /* ТЕЛЕФОН: тот же эффект прокрутки, но картинка целиком, не растянута.
-     Вместо видео листаются кадры (media/frames), так надёжнее на iPhone. */
+  /* ТЕЛЕФОН: картинка на всю ширину, под ней лента этапов.
+     Листаешь ленту пальцем вбок, и дом на картинке достраивается до нужного этапа. */
   build.classList.add('m');
   topbar.classList.add('solid');
   vid.removeAttribute('poster'); vid.style.display = 'none';
-  const NF = 81, frames = [], cv = document.createElement('canvas');
+  const NF = 81, FPS = 8, frames = [], cv = document.createElement('canvas');
   cv.className = 'frames'; cv.width = 720; cv.height = 406;
   vid.parentNode.insertBefore(cv, vid);
   const ctx = cv.getContext('2d');
   const fsrc = i => 'media/frames/f' + String(i + 1).padStart(3, '0') + '.jpg';
-  let shown = -1, want = 0;
+  let shown = -1, curF = 0, targetF = 0;
   const draw = i => {
-    // если нужный кадр ещё грузится, показываем ближайший загруженный
     let k = i; while (k > 0 && !(frames[k] && frames[k].done)) k--;
     if (!(frames[k] && frames[k].done) || k === shown) return;
     ctx.drawImage(frames[k], 0, 0, cv.width, cv.height); shown = k;
   };
-  const load = i => { const im = new Image(); im.onload = () => { im.done = true; if (Math.abs(i - want) < 3 || shown < 0) { shown = -1; draw(want); } }; im.src = fsrc(i); frames[i] = im; };
-  load(0); for (let i = 1; i < NF; i++) load(i);
-  const onScrollM = () => {
-    const r = build.getBoundingClientRect(), total = build.offsetHeight - innerHeight;
-    const p = Math.min(1, Math.max(0, -r.top / total));
-    const b = Math.min(1, Math.max(0, (p - 0.04) / 0.76));
-    want = Math.round(b * (NF - 1)); draw(want);
-    setStage(b * DUR);
-    night.style.opacity = Math.min(1, Math.max(0, (p - 0.80) / 0.1));
-    const end = p > 0.88;
-    build.classList.toggle('ended', end); fin.classList.toggle('on', end);
-    hint.style.opacity = p < 0.02 ? 1 : 0;
+  for (let i = 0; i < NF; i++) { const im = new Image(); im.onload = () => { im.done = true; if (i === curF || shown < 0) { shown = -1; draw(curF); } }; im.src = fsrc(i); frames[i] = im; }
+  // плавно «доигрываем» кадры до нужного этапа
+  let last = 0;
+  const step = t => {
+    if (curF !== targetF && t - last > 28) { curF += curF < targetF ? 1 : -1; draw(curF); last = t; }
+    requestAnimationFrame(step);
   };
-  card.classList.add('on'); setStage(0);
-  addEventListener('scroll', onScrollM, { passive: true }); addEventListener('resize', onScrollM); onScrollM();
+  requestAnimationFrame(step);
+
+  // лента этапов
+  const strip = document.createElement('div'); strip.className = 'strip';
+  const items = STAGES.concat([[DUR, 'Дом готов', 'Вечер, в окнах загорается свет. Осталось только заехать.']]);
+  strip.innerHTML = items.map((st, i) => '<button class="sc' + (i ? '' : ' on') + '" data-i="' + i + '"><span class="n">' + String(i + 1).padStart(2, '0') + ' / ' + items.length + '</span><b>' + st[1] + '</b><span class="t">' + st[2] + '</span></button>').join('');
+  const dots = document.createElement('div'); dots.className = 'sdots';
+  dots.innerHTML = items.map((_, i) => '<i class="' + (i ? '' : 'on') + '"></i>').join('');
+  const vbox = cv.parentNode;
+  vbox.after(strip); strip.after(dots);
+  let active = 0;
+  const setActive = i => {
+    if (i === active) return; active = i;
+    $$('.sc', strip).forEach((c, k) => c.classList.toggle('on', k === i));
+    $$('i', dots).forEach((d, k) => d.classList.toggle('on', k === i));
+    const isEnd = i === items.length - 1;
+    targetF = isEnd ? NF - 1 : Math.min(NF - 1, Math.round(items[i][0] * FPS + (i ? 3 : 0)));
+    night.style.opacity = isEnd ? 1 : 0;
+  };
+  let raf = 0;
+  strip.addEventListener('scroll', () => {
+    cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(() => {
+      const mid = strip.scrollLeft + strip.clientWidth / 2; let best = 0, bd = 1e9;
+      $$('.sc', strip).forEach((c, k) => { const d = Math.abs(c.offsetLeft + c.offsetWidth / 2 - mid); if (d < bd) { bd = d; best = k; } });
+      setActive(best);
+    });
+  }, { passive: true });
+  strip.addEventListener('click', e => {
+    const c = e.target.closest('.sc'); if (!c) return;
+    strip.scrollTo({ left: c.offsetLeft - (strip.clientWidth - c.offsetWidth) / 2, behavior: 'smooth' });
+  });
+  fin.classList.add('on');
 } else {
   /* КОМПЬЮТЕР: дом собирается при прокрутке.
      Ролик загружаем целиком в память: так перемотка плавная на любом хостинге.
