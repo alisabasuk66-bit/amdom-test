@@ -55,32 +55,10 @@ const vid = $('#vid'), night = $('#night'), card = $('#card'), cbody = $('#cbody
 const small = matchMedia('(max-width:760px)').matches;
 const h264 = vid.canPlayType('video/mp4; codecs="avc1.42E01E"');
 const VSRC = !h264 ? 'media/build_960.webm?v=2' : (small ? 'media/build_960.mp4?v=2' : 'media/build_1280.mp4?v=2');
-// Ролик загружаем целиком в память: так перемотка прокруткой плавная на любом хостинге.
-// Если сайт открыт просто файлом с компьютера, подключаем ролик напрямую.
-fetch(VSRC).then(r => { if (!r.ok) throw 0; return r.blob(); })
-  .then(b => { vid.src = URL.createObjectURL(b); })
-  .catch(() => { vid.src = VSRC; });
 if (small) night.src = 'media/evening_960.jpg';
 let DUR = 10.1, target = 0, cur = 0, stageIdx = -1, heroOn = true;
 STAGES.forEach(s => { const d = document.createElement('span'); d.style.left = (s[0] / DUR * 100) + '%'; rail.appendChild(d); });
 vid.addEventListener('loadedmetadata', () => { DUR = vid.duration || DUR; });
-
-// Доли прокрутки: 0–0.06 заголовок, 0.06–0.80 стройка, 0.80–0.92 вечер, дальше финал
-function onScroll() {
-  const r = build.getBoundingClientRect(), total = build.offsetHeight - innerHeight;
-  const p = Math.min(1, Math.max(0, -r.top / total));
-  heroOn = r.bottom > 0;
-  const b = Math.min(1, Math.max(0, (p - 0.06) / 0.74));
-  target = b * (DUR - 0.05);
-  night.style.opacity = Math.min(1, Math.max(0, (p - 0.80) / 0.12));
-  const io = Math.max(0, 1 - p / 0.05);
-  intro.style.opacity = io; tintI.style.opacity = io; hint.style.opacity = Math.max(0, 1 - p / 0.03);
-  const building = p > 0.05 && p < 0.84;
-  card.classList.toggle('on', building); rail.classList.toggle('on', building);
-  fin.classList.toggle('on', p > 0.9); tintF.classList.toggle('on', p > 0.88);
-  bar.style.width = (b * 100) + '%';
-  topbar.classList.toggle('solid', r.bottom <= innerHeight * 0.2);
-}
 function setStage(t) {
   let i = 0; for (let k = 0; k < STAGES.length; k++) if (t >= STAGES[k][0]) i = k;
   if (i === stageIdx) return; stageIdx = i;
@@ -90,17 +68,66 @@ function setStage(t) {
     cnum.textContent = String(i + 1).padStart(2, '0') + ' / ' + STAGES.length; cbody.classList.remove('fade');
   }, 160);
 }
-function tick() {
-  if (heroOn) {
-    cur += (target - cur) * 0.18;
-    if (Math.abs(target - cur) < 0.004) cur = target;
-    if (vid.readyState >= 1 && Math.abs(vid.currentTime - cur) > 0.02) { try { vid.currentTime = cur; } catch (e) {} }
-    setStage(cur);
-  }
-  requestAnimationFrame(tick);
+
+if (small) {
+  /* ТЕЛЕФОН: ролик просто проигрывается сам, один экран, без долгой прокрутки */
+  build.classList.add('m');
+  vid.src = VSRC; vid.muted = true; vid.setAttribute('muted', ''); vid.preload = 'auto';
+  hint.style.display = 'none';
+  const showFinal = () => {
+    night.style.opacity = 1; tintF.classList.add('on'); fin.classList.add('on');
+    card.classList.remove('on'); rail.classList.remove('on');
+    intro.style.opacity = 0; tintI.style.opacity = 0;
+  };
+  vid.addEventListener('timeupdate', () => {
+    const t = vid.currentTime, started = t > 0.5;
+    intro.style.opacity = started ? 0 : 1; tintI.style.opacity = started ? 0 : 1;
+    card.classList.toggle('on', started && !vid.ended); rail.classList.toggle('on', started && !vid.ended);
+    bar.style.width = Math.min(100, t / DUR * 100) + '%';
+    setStage(t);
+  });
+  vid.addEventListener('ended', showFinal);
+  const tryPlay = () => { const pr = vid.play(); if (pr && pr.catch) pr.catch(() => setTimeout(showFinal, 600)); };
+  // 1,5 секунды показываем заголовок на фоне свай, потом запускаем стройку
+  setTimeout(() => { if (vid.readyState >= 2) tryPlay(); else vid.addEventListener('canplay', tryPlay, { once: true }); }, 1500);
+  setStage(0);
+  const onScrollM = () => { topbar.classList.toggle('solid', build.getBoundingClientRect().bottom <= innerHeight * 0.2); };
+  addEventListener('scroll', onScrollM, { passive: true }); onScrollM();
+} else {
+  /* КОМПЬЮТЕР: дом собирается при прокрутке.
+     Ролик загружаем целиком в память: так перемотка плавная на любом хостинге.
+     Если сайт открыт просто файлом с компьютера, подключаем ролик напрямую. */
+  fetch(VSRC).then(r => { if (!r.ok) throw 0; return r.blob(); })
+    .then(b => { vid.src = URL.createObjectURL(b); })
+    .catch(() => { vid.src = VSRC; });
+  // Доли прокрутки: 0–0.06 заголовок, 0.06–0.80 стройка, 0.80–0.92 вечер, дальше финал
+  const onScroll = () => {
+    const r = build.getBoundingClientRect(), total = build.offsetHeight - innerHeight;
+    const p = Math.min(1, Math.max(0, -r.top / total));
+    heroOn = r.bottom > 0;
+    const b = Math.min(1, Math.max(0, (p - 0.06) / 0.74));
+    target = b * (DUR - 0.05);
+    night.style.opacity = Math.min(1, Math.max(0, (p - 0.80) / 0.12));
+    const io = Math.max(0, 1 - p / 0.05);
+    intro.style.opacity = io; tintI.style.opacity = io; hint.style.opacity = Math.max(0, 1 - p / 0.03);
+    const building = p > 0.05 && p < 0.84;
+    card.classList.toggle('on', building); rail.classList.toggle('on', building);
+    fin.classList.toggle('on', p > 0.9); tintF.classList.toggle('on', p > 0.88);
+    bar.style.width = (b * 100) + '%';
+    topbar.classList.toggle('solid', r.bottom <= innerHeight * 0.2);
+  };
+  const tick = () => {
+    if (heroOn) {
+      cur += (target - cur) * 0.18;
+      if (Math.abs(target - cur) < 0.004) cur = target;
+      if (vid.readyState >= 1 && Math.abs(vid.currentTime - cur) > 0.02) { try { vid.currentTime = cur; } catch (e) {} }
+      setStage(cur);
+    }
+    requestAnimationFrame(tick);
+  };
+  addEventListener('scroll', onScroll, { passive: true }); addEventListener('resize', onScroll);
+  onScroll(); setStage(0); requestAnimationFrame(tick);
 }
-addEventListener('scroll', onScroll, { passive: true }); addEventListener('resize', onScroll);
-onScroll(); setStage(0); requestAnimationFrame(tick);
 
 /* ==========================================================
    КАТАЛОГ

@@ -13,7 +13,7 @@
 <meta property="og:image" content="media/poster.jpg">
 <link rel="icon" type="image/png" href="media/favicon.png">
 <link rel="preload" href="fonts/InterDisplay-ExtraBold.woff" as="font" type="font/woff" crossorigin>
-<link rel="stylesheet" href="css/style.css?v=2">
+<link rel="stylesheet" href="css/style.css?v=3">
 </head>
 <body>
 
@@ -96,15 +96,15 @@
       <div class="fgroup" data-key="floors">
         <span>Этажность</span>
         <button class="chip on" data-v="all">Все</button>
-        <button class="chip" data-v="1">1 этаж</button>
-        <button class="chip" data-v="2">2 этажа</button>
+        <button class="chip" data-v="1"><span class="cl">1 этаж</span><span class="cs">1</span></button>
+        <button class="chip" data-v="2"><span class="cl">2 этажа</span><span class="cs">2</span></button>
       </div>
       <div class="fgroup" data-key="area">
-        <span>Площадь</span>
+        <span>Площадь, м²</span>
         <button class="chip on" data-v="all">Все</button>
-        <button class="chip" data-v="s">до 50 м²</button>
-        <button class="chip" data-v="m">50–80 м²</button>
-        <button class="chip" data-v="l">больше 80 м²</button>
+        <button class="chip" data-v="s"><span class="cl">до 50 м²</span><span class="cs">до 50</span></button>
+        <button class="chip" data-v="m"><span class="cl">50–80 м²</span><span class="cs">50–80</span></button>
+        <button class="chip" data-v="l"><span class="cl">больше 80 м²</span><span class="cs">80+</span></button>
       </div>
       <div class="fgroup" data-key="bed">
         <span>Спальни</span>
@@ -112,7 +112,7 @@
         <button class="chip" data-v="0">Студия</button>
         <button class="chip" data-v="1">1</button>
         <button class="chip" data-v="2">2</button>
-        <button class="chip" data-v="3">3 и больше</button>
+        <button class="chip" data-v="3"><span class="cl">3 и больше</span><span class="cs">3+</span></button>
       </div>
       <div class="fcount" id="fcount"></div>
     </div>
@@ -453,6 +453,6 @@
 </div>
 
 <script src="js/data.js?v=2"></script>
-<script src="js/app.js?v=2"></script>
+<script src="js/app.js?v=3"></script>
 </body>
 </html>
