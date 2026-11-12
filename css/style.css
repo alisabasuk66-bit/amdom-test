@@ -202,8 +202,8 @@ h1,h2,h3{font-family:'Inter Display','Inter',sans-serif;font-weight:800;letter-s
 .kv b{display:block;font-family:'Inter Display';font-weight:800;font-size:20px}
 .kv span{font-size:12px;color:var(--muted)}
 .kv .kv-area{position:relative}
-.inf{display:inline-grid;place-items:center;width:16px;height:16px;border-radius:50%;border:1.3px solid var(--muted);color:var(--muted);font:italic 700 10px/1 Georgia,serif;vertical-align:-3px;margin-left:3px;cursor:pointer;transition:all .2s}
-.inf:hover,.kv-area.open .inf{background:var(--kofe);border-color:var(--kofe);color:#fff}
+.inf{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--green);color:#fff;font:italic 700 12px/1 Georgia,serif;vertical-align:-5px;margin-left:5px;cursor:pointer;box-shadow:0 0 0 3px rgba(94,158,75,.2);transition:all .2s}
+.inf:hover,.kv-area.open .inf{background:var(--kofe);box-shadow:0 0 0 3px rgba(59,42,31,.15)}
 .kv .tip{position:absolute;left:0;top:calc(100% + 8px);z-index:5;width:340px;max-width:calc(100vw - 64px);background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px;font-size:13px;line-height:1.5;color:#4a382b;box-shadow:0 16px 40px rgba(59,42,31,.18);opacity:0;visibility:hidden;transform:translateY(-4px);transition:all .2s}
 .kv-area.open .tip{opacity:1;visibility:visible;transform:none}
 @media (hover:hover){.kv-area:has(.inf:hover) .tip{opacity:1;visibility:visible;transform:none}}
