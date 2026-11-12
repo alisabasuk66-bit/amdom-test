@@ -13,7 +13,7 @@
 <meta property="og:image" content="media/poster.jpg">
 <link rel="icon" type="image/png" href="media/favicon.png">
 <link rel="preload" href="fonts/InterDisplay-ExtraBold.woff" as="font" type="font/woff" crossorigin>
-<link rel="stylesheet" href="css/style.css?v=7">
+<link rel="stylesheet" href="css/style.css?v=8">
 </head>
 <body>
 
@@ -22,6 +22,7 @@
   <a class="logo" href="#" aria-label="АМ ДОМ, на главную"><img src="media/logo.png" alt="АМ ДОМ"></a>
   <nav class="menu" id="menu">
     <a href="#catalog">Каталог</a>
+    <a href="#objects">Объекты</a>
     <a href="#packages">Комплектации</a>
     <a href="#tech">Технология</a>
     <a href="#mortgage">Ипотека</a>
@@ -128,6 +129,23 @@
   </div>
 </section>
 
+<!-- =============== НАШИ ОБЪЕКТЫ =============== -->
+<section class="sec dark" id="objects">
+  <div class="wrap">
+    <div class="head">
+      <div>
+        <div class="eyebrow">Наши объекты</div>
+        <h2>Дома, которые мы построили</h2>
+      </div>
+      <p>Фото с наших объектов: готовые дома, отделка внутри и этапы строительства.</p>
+    </div>
+    <div class="obj">
+      <div class="otrk" id="otrk"></div>
+      <button class="onav p" aria-label="Назад">‹</button><button class="onav n" aria-label="Вперёд">›</button>
+    </div>
+  </div>
+</section>
+
 <!-- =============== ПОЧЕМУ МЫ =============== -->
 <section class="sec paper" id="why">
   <div class="wrap">
@@ -184,12 +202,10 @@
         <div class="eyebrow">Технология</div>
         <h2>Из чего сделана стена</h2>
       </div>
-      <p>Нажмите на слой, чтобы узнать, зачем он нужен. Так устроены наружные стены во всех наших домах.</p>
+      <p>Нажмите на номер слоя, чтобы узнать, зачем он нужен. Так устроены наружные стены во всех наших домах.</p>
     </div>
     <div class="wall">
-      <div class="wall-pic">
-        <svg id="wallsvg" viewBox="0 0 560 420" aria-label="Разрез стены"></svg>
-      </div>
+      <div class="wall-pic" id="wallpic"></div>
       <div class="wall-list" id="wall-list"></div>
     </div>
   </div>
@@ -269,7 +285,7 @@
           <div><b id="m-over"></b><span>переплата</span></div>
         </div>
         <button class="btn light" id="m-lead"><span class="dot"></span>Подобрать программу</button>
-        <p class="small">Расчёт примерный, условия уточняйте у менеджера.</p>
+        <p class="mnote"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 11v6M12 7.5v.5"/></svg><span>Расчёт носит информационный характер и не является публичной офертой. Точная ставка, сумма кредита и размер платежа зависят от условий банка и определяются после одобрения заявки. Оставьте заявку, и мы подберём подходящую программу.</span></p>
       </div>
     </div>
   </div>
@@ -366,7 +382,8 @@
         </ul>
         <div class="msg">
           <a class="mbtn tg" data-tg target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M21.5 3.6L2.9 10.8c-1.3.5-1.2 1.2-.2 1.5l4.8 1.5 1.8 5.6c.2.6.4.8.9.8.4 0 .6-.2.9-.4l2.3-2.2 4.7 3.5c.9.5 1.5.2 1.7-.8l3.1-14.6c.3-1.3-.5-1.9-1.4-1.6zM9.2 13.4l9.2-5.8c.4-.3.8-.1.5.2l-7.9 7.1-.3 3.3z"/></svg>Telegram</a>
-          <a class="mbtn mx" data-max target="_blank" rel="noopener" hidden><svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.2 2 11.4c0 2.9 1.4 5.5 3.7 7.2L5 22l3.6-2c1 .3 2.2.5 3.4.5 5.5 0 10-4.2 10-9.4S17.5 2 12 2z"/></svg>MAX</a>
+          <a class="mbtn mx" data-max target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.2 2 11.4c0 2.9 1.4 5.5 3.7 7.2L5 22l3.6-2c1 .3 2.2.5 3.4.5 5.5 0 10-4.2 10-9.4S17.5 2 12 2z"/></svg>MAX</a>
+          <a class="mbtn vk" data-vk target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M12.8 17.5C6.6 17.5 3.1 13.3 3 6.5h3.1c.1 5 2.3 7.1 4.1 7.5V6.5h2.9v4.3c1.8-.2 3.6-2.2 4.2-4.3h2.9c-.5 2.6-2.4 4.6-3.8 5.4 1.4.7 3.6 2.4 4.4 5.6h-3.2c-.7-2.1-2.4-3.8-4.5-4v4z"/></svg>ВКонтакте</a>
           <a class="mbtn" data-phone href="#"><svg viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z"/></svg>Позвонить</a>
         </div>
       </div>
@@ -395,26 +412,30 @@
     <div class="foot-top">
       <a class="logo" href="#"><img src="media/logo.png" alt="АМ ДОМ"></a>
       <nav>
-        <a href="#catalog">Каталог</a><a href="#packages">Комплектации</a><a href="#tech">Технология</a>
+        <a href="#catalog">Каталог</a><a href="#objects">Объекты</a><a href="#packages">Комплектации</a><a href="#tech">Технология</a>
         <a href="#calc">Калькулятор</a><a href="#mortgage">Ипотека</a><a href="#faq">Вопросы</a><a href="#contacts">Контакты</a>
       </nav>
       <div class="soc">
         <a data-avito target="_blank" rel="noopener" hidden aria-label="Авито">Авито</a>
-        <a data-vk target="_blank" rel="noopener" hidden aria-label="ВКонтакте">ВК</a>
+        <a class="si tg" data-tg target="_blank" rel="noopener" aria-label="Telegram"><svg viewBox="0 0 24 24"><path d="M21.5 3.6L2.9 10.8c-1.3.5-1.2 1.2-.2 1.5l4.8 1.5 1.8 5.6c.2.6.4.8.9.8.4 0 .6-.2.9-.4l2.3-2.2 4.7 3.5c.9.5 1.5.2 1.7-.8l3.1-14.6c.3-1.3-.5-1.9-1.4-1.6z"/></svg></a>
+        <a class="si mx" data-max target="_blank" rel="noopener" aria-label="MAX"><svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.2 2 11.4c0 2.9 1.4 5.5 3.7 7.2L5 22l3.6-2c1 .3 2.2.5 3.4.5 5.5 0 10-4.2 10-9.4S17.5 2 12 2z"/></svg></a>
+        <a class="si vk" data-vk target="_blank" rel="noopener" aria-label="ВКонтакте"><svg viewBox="0 0 24 24"><path d="M12.8 17.5C6.6 17.5 3.1 13.3 3 6.5h3.1c.1 5 2.3 7.1 4.1 7.5V6.5h2.9v4.3c1.8-.2 3.6-2.2 4.2-4.3h2.9c-.5 2.6-2.4 4.6-3.8 5.4 1.4.7 3.6 2.4 4.4 5.6h-3.2c-.7-2.1-2.4-3.8-4.5-4v4z"/></svg></a>
       </div>
     </div>
     <div class="foot-bot">
       <div><span data-legal></span> · ИНН <span data-inn></span></div>
       <div><a href="policy.html">Политика конфиденциальности</a></div>
-      <div>Информация на сайте не является публичной офертой</div>
     </div>
+    <p class="foot-note">Информация и цены на сайте носят ознакомительный характер и не являются публичной офертой (ст. 437 ГК РФ). Итоговая стоимость фиксируется в договоре.</p>
   </div>
 </footer>
 
 <!-- нижняя панель на телефоне -->
 <div class="mbar" id="mbar">
   <a data-phone href="#"><svg viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z"/></svg>Позвонить</a>
-  <a data-tg target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M21.5 3.6L2.9 10.8c-1.3.5-1.2 1.2-.2 1.5l4.8 1.5 1.8 5.6c.2.6.4.8.9.8.4 0 .6-.2.9-.4l2.3-2.2 4.7 3.5c.9.5 1.5.2 1.7-.8l3.1-14.6c.3-1.3-.5-1.9-1.4-1.6z"/></svg>Написать</a>
+  <a class="ic tg" data-tg target="_blank" rel="noopener" aria-label="Telegram"><svg viewBox="0 0 24 24"><path d="M21.5 3.6L2.9 10.8c-1.3.5-1.2 1.2-.2 1.5l4.8 1.5 1.8 5.6c.2.6.4.8.9.8.4 0 .6-.2.9-.4l2.3-2.2 4.7 3.5c.9.5 1.5.2 1.7-.8l3.1-14.6c.3-1.3-.5-1.9-1.4-1.6z"/></svg></a>
+  <a class="ic mx" data-max target="_blank" rel="noopener" aria-label="MAX"><svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.2 2 11.4c0 2.9 1.4 5.5 3.7 7.2L5 22l3.6-2c1 .3 2.2.5 3.4.5 5.5 0 10-4.2 10-9.4S17.5 2 12 2z"/></svg></a>
+  <a class="ic vk" data-vk target="_blank" rel="noopener" aria-label="ВКонтакте"><svg viewBox="0 0 24 24"><path d="M12.8 17.5C6.6 17.5 3.1 13.3 3 6.5h3.1c.1 5 2.3 7.1 4.1 7.5V6.5h2.9v4.3c1.8-.2 3.6-2.2 4.2-4.3h2.9c-.5 2.6-2.4 4.6-3.8 5.4 1.4.7 3.6 2.4 4.4 5.6h-3.2c-.7-2.1-2.4-3.8-4.5-4v4z"/></svg></a>
   <a href="#quiz" class="accent">Подобрать дом</a>
 </div>
 
@@ -455,7 +476,7 @@
   <button class="btn" id="cookie-ok">Хорошо</button>
 </div>
 
-<script src="js/data.js?v=2"></script>
-<script src="js/app.js?v=7"></script>
+<script src="js/data.js?v=8"></script>
+<script src="js/app.js?v=8"></script>
 </body>
 </html>

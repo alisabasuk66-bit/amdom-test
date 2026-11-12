@@ -20,9 +20,11 @@ $$('[data-phone]').forEach(a => { a.href = 'tel:' + C.phoneRaw; if (!a.children.
 $$('[data-email]').forEach(a => { a.href = 'mailto:' + C.email; a.textContent = C.email; });
 $$('[data-map]').forEach(a => { a.href = C.mapUrl; a.textContent = C.address; });
 $$('[data-tg]').forEach(a => { if (C.telegram) a.href = C.telegram; else a.hidden = true; });
-$$('[data-max]').forEach(a => { if (C.max) { a.href = C.max; a.hidden = false; } });
+// MAX и ВКонтакте видны всегда. Пока ссылка не вписана в data.js, кнопка подсказывает написать в Telegram
+const soon = (a, url, nm) => { if (url) a.href = url; else { a.removeAttribute('target'); a.href = '#contacts'; a.addEventListener('click', e => { e.preventDefault(); toast(nm + ' скоро будет здесь. Пока напишите нам в Telegram или позвоните.'); }); } };
+$$('[data-max]').forEach(a => soon(a, C.max, 'Чат в MAX'));
+$$('[data-vk]').forEach(a => soon(a, C.vk, 'Сообщество ВКонтакте'));
 $$('[data-avito]').forEach(a => { if (C.avito) { a.href = C.avito; a.hidden = false; } });
-$$('[data-vk]').forEach(a => { if (C.vk) { a.href = C.vk; a.hidden = false; } });
 $$('[data-legal]').forEach(e => e.textContent = S.legal.name);
 $$('[data-inn]').forEach(e => e.textContent = S.legal.inn);
 
@@ -174,13 +176,15 @@ function match(h) {
   if (F.bed !== 'all') { const b = +F.bed; if (b === 3 ? h.bedrooms < 3 : h.bedrooms !== b) return false; }
   return true;
 }
+const cardPics = h => h.photos.map((p, i) => i ? img(h, 'c' + p) : img(h, 'thumb'));
 function cardHTML(h) {
   const badges = [h.floors === 2 ? '2 этажа' : '1 этаж'];
   if (h.style) badges.push(h.style);
   const spec = [bedTxt(h.bedrooms), h.baths + ' ' + plural(h.baths, 'санузел', 'санузла', 'санузлов')];
   if (h.outdoorArea) spec.push((h.outdoor.split(',')[0]).replace(' и балкон', ' + балкон'));
   return '<article class="hc" data-id="' + h.id + '" tabindex="0" role="button" aria-label="' + esc(h.name) + ', подробнее">' +
-    '<div class="ph"><img src="' + img(h, 'thumb') + '" alt="' + esc(h.name) + '" loading="lazy">' +
+    '<div class="ph"><div class="trk">' + cardPics(h).map((src, i) => '<img src="' + src + '" alt="' + esc(h.name) + (i ? ', фото ' + (i + 1) : '') + '" loading="lazy" draggable="false">').join('') + '</div>' +
+    (h.photos.length > 1 ? '<button class="cnav p" aria-label="Предыдущее фото">‹</button><button class="cnav n" aria-label="Следующее фото">›</button><div class="cdots">' + h.photos.map((p, i) => '<i' + (i ? '' : ' class="on"') + '></i>').join('') + '</div>' : '') +
     '<div class="badges">' + badges.map(b => '<span>' + b + '</span>').join('') + '</div></div>' +
     '<div class="bd"><h3>' + esc(h.name) + '</h3><div class="sz">' + h.size + ' м · ' + h.area + ' м²</div>' +
     '<div class="spec">' + spec.map(s => '<span>' + esc(s) + '</span>').join('') + '</div>' +
@@ -203,7 +207,22 @@ $('#freset').addEventListener('click', () => {
   $$('#filters .fgroup').forEach(g => $$('.chip', g).forEach((c, i) => c.classList.toggle('on', i === 0)));
   renderGrid(false);
 });
-grid.addEventListener('click', e => { const c = e.target.closest('.hc'); if (c) openHouse(c.dataset.id, true); });
+/* листание фото прямо в карточке */
+const trkIdx = t => Math.round(t.scrollLeft / t.clientWidth);
+const trkDots = t => { const i = trkIdx(t); $$('.cdots i', t.parentElement).forEach((d, k) => d.classList.toggle('on', k === i)); };
+grid.addEventListener('scroll', e => { if (e.target.classList && e.target.classList.contains('trk')) trkDots(e.target); }, true);
+grid.addEventListener('click', e => {
+  const nv = e.target.closest('.cnav');
+  if (nv) {
+    e.stopPropagation();
+    const t = $('.trk', nv.parentElement), n = t.children.length;
+    let i = trkIdx(t) + (nv.classList.contains('n') ? 1 : -1);
+    i = (i + n) % n;
+    t.scrollTo({ left: i * t.clientWidth, behavior: 'smooth' });
+    return;
+  }
+  const c = e.target.closest('.hc'); if (c) openHouse(c.dataset.id, true);
+});
 grid.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target.classList.contains('hc')) { e.preventDefault(); openHouse(e.target.dataset.id, true); } });
 
 /* ---------- окна ---------- */
@@ -235,7 +254,7 @@ function openHouse(id, push) {
       '<div class="tog" id="p-dim"><button class="on" data-d="1">С размерами</button><button data-d="0">Без</button></div></div></div>' +
       '<img id="p-img" src="' + img(h, h.plans[0][2]) + '" alt="Планировка ' + esc(h.name) + '" loading="lazy"></div>' +
     '<div class="info"><h2 id="h-name">' + esc(h.name) + '</h2><div class="sz">' + h.size + ' м · ' + h.area + ' м² · ' + (h.floors === 2 ? 'двухэтажный' : 'одноэтажный') + (h.style ? ' · ' + h.style : '') + '</div>' +
-      '<div class="kv"><div><b>' + h.area + ' м²</b><span>площадь дома</span></div><div><b>' + h.size + '</b><span>размер, м</span></div>' +
+      '<div class="kv"><div class="kv-area"><b>' + h.area + ' м²</b><span>площадь дома <button class="inf" type="button" aria-label="Пояснение к площади" aria-expanded="false">i</button></span><div class="tip" role="tooltip">' + esc(S.areaNote) + '</div></div><div><b>' + h.size + '</b><span>размер, м</span></div>' +
       '<div><b>' + (h.bedrooms || '—') + '</b><span>' + (h.bedrooms ? plural(h.bedrooms, 'спальня', 'спальни', 'спален') : 'студия') + '</span></div>' +
       '<div><b>' + h.baths + '</b><span>' + plural(h.baths, 'санузел', 'санузла', 'санузлов') + '</span></div>' +
       '<div><b>' + h.rooms + '</b><span>' + plural(h.rooms, 'комната', 'комнаты', 'комнат') + '</span></div>' +
@@ -255,6 +274,10 @@ function openHouse(id, push) {
   let tx = null; const gm = $('.gal-main', hm);
   gm.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive: true });
   gm.addEventListener('touchend', e => { if (tx === null) return; const d = e.changedTouches[0].clientX - tx; if (Math.abs(d) > 40) go(gi + (d < 0 ? 1 : -1)); tx = null; });
+  // сноска к площади
+  const inf = $('.inf', hm), ka = $('.kv-area', hm);
+  inf.addEventListener('click', e => { e.stopPropagation(); const o = ka.classList.toggle('open'); inf.setAttribute('aria-expanded', o); });
+  hm.addEventListener('click', e => { if (!e.target.closest('.kv-area')) { ka.classList.remove('open'); inf.setAttribute('aria-expanded', 'false'); } });
   // планировка
   let fl = 0, dim = 1; const pimg = $('#p-img', hm);
   const setPlan = () => { pimg.src = img(h, h.plans[fl][dim ? 2 : 1]); };
@@ -288,6 +311,37 @@ addEventListener('popstate', () => {
 });
 
 /* ==========================================================
+   НАШИ ОБЪЕКТЫ: лента фото + просмотр
+   ========================================================== */
+(function objects() {
+  const O = (S.objects || []).map(n => { const k = (n < 10 ? '0' : '') + n; return ['img/objects/o' + k + 't.jpg', 'img/objects/o' + k + '.jpg']; });
+  const trk = $('#otrk'); if (!trk || !O.length) { const s = $('#objects'); s && (s.hidden = true); return; }
+  trk.innerHTML = O.map((o, i) => '<button class="oit" data-i="' + i + '" aria-label="Открыть фото ' + (i + 1) + '"><img src="' + o[0] + '" alt="Построенный дом АМ ДОМ, фото ' + (i + 1) + '" loading="lazy"></button>').join('');
+  const step = () => Math.max(trk.clientWidth * 0.8, 260);
+  $('.onav.p', trk.parentElement).addEventListener('click', () => trk.scrollBy({ left: -step(), behavior: 'smooth' }));
+  $('.onav.n', trk.parentElement).addEventListener('click', () => trk.scrollBy({ left: step(), behavior: 'smooth' }));
+  let cur = 0, box = null;
+  const show = i => { cur = (i + O.length) % O.length; $('img', box).src = O[cur][1]; $('.lbc', box).textContent = (cur + 1) + ' / ' + O.length; };
+  const close = () => { if (!box) return; box.remove(); box = null; document.body.classList.remove('lock'); removeEventListener('keydown', key); };
+  const key = e => { if (e.key === 'Escape') close(); else if (e.key === 'ArrowRight') show(cur + 1); else if (e.key === 'ArrowLeft') show(cur - 1); };
+  trk.addEventListener('click', e => {
+    const b = e.target.closest('.oit'); if (!b) return;
+    box = document.createElement('div'); box.className = 'lb';
+    box.innerHTML = '<img alt="Фото объекта"><button class="lbx" aria-label="Закрыть">×</button><button class="lbn p" aria-label="Назад">‹</button><button class="lbn n" aria-label="Вперёд">›</button><div class="lbc"></div>';
+    document.body.appendChild(box); document.body.classList.add('lock');
+    box.addEventListener('click', ev => {
+      if (ev.target.closest('.lbn')) { show(cur + (ev.target.closest('.lbn').classList.contains('n') ? 1 : -1)); return; }
+      if (ev.target.tagName !== 'IMG') close();
+    });
+    let tx = null;
+    box.addEventListener('touchstart', ev => { tx = ev.touches[0].clientX; }, { passive: true });
+    box.addEventListener('touchend', ev => { if (tx === null) return; const d = ev.changedTouches[0].clientX - tx; if (Math.abs(d) > 40) show(cur + (d < 0 ? 1 : -1)); tx = null; });
+    addEventListener('keydown', key);
+    show(+b.dataset.i);
+  });
+})();
+
+/* ==========================================================
    КОМПЛЕКТАЦИИ
    ========================================================== */
 const PI = S.packageItems, ptabs = $('#ptabs'), pbody = $('#pbody');
@@ -313,51 +367,27 @@ renderPack(0);
    ТЕХНОЛОГИЯ: разрез стены
    ========================================================== */
 const LAYERS = [
-  ['Внутренняя отделка', 'В предчистовой ГКЛ 12 мм, в чистовой имитация бруса из лиственницы сорта АВ.'],
-  ['Пароизоляция Изоспан RS', 'Не пускает влагу из дома в утеплитель. Стыки проклеены лентой Изоспан Proff.'],
-  ['Каркас и утеплитель', 'Сухая строганая доска 45×145 мм с шагом 590 мм, между стойками каменная вата ТЕХНОНИКОЛЬ РОКЛАЙТ 200 мм. Не горит и не оседает.'],
-  ['Мембрана Изоспан АМ', 'Супердиффузионная мембрана защищает утеплитель от ветра и воды, но выпускает пар наружу.'],
-  ['Вентзазор', 'Контробрешётка 45×45 мм создаёт зазор, по которому уходит влага. Стена всегда сухая.'],
-  ['Сайдинг «Блок-Хаус»', 'Сайдинг Docke под бревно цвета дерево. Не нужно красить, можно выбрать любой цвет.']
+  ['Внутренняя отделка', 'На выбор: ГКЛ 12 мм, имитация бруса или вагонка.', 53, 11],
+  ['Контррейки', 'Обрешётка стен для крепления внутренней отделки.', 69.5, 5],
+  ['Пароизоляционная плёнка', 'Не пускает влагу из дома в утеплитель. Стыки проклеены лентой.', 56, 17.5],
+  ['Каркас и утеплитель', 'Сухая строганая доска с шагом 590 мм, между стойками каменная вата. Не горит и не оседает.', 25, 34],
+  ['Плёнка гидро-ветрозащитная', 'Защищает утеплитель от ветра и воды, но выпускает пар наружу.', 38, 44],
+  ['Вентзазор', 'Контробрешётка создаёт зазор, по которому уходит влага. Стена всегда сухая.', 85, 34.5],
+  ['Наружная отделка', 'На выбор: сайдинг, имитация бруса, OSB, фасадная плитка Hauberg.', 62, 68]
 ];
 (function wall() {
-  const svg = $('#wallsvg'), list = $('#wall-list'), NS = 'http://www.w3.org/2000/svg';
-  const W = 196, HH = 236;
-  const defs = '<defs>' +
-    '<pattern id="pt-board" width="196" height="22" patternUnits="userSpaceOnUse"><rect width="196" height="22" fill="#efe4d0"/><rect y="21" width="196" height="1.4" fill="#cdb894"/></pattern>' +
-    '<pattern id="pt-wool" width="22" height="14" patternUnits="userSpaceOnUse"><rect width="22" height="14" fill="#cbbd73"/><path d="M0 7 q5.5 -6 11 0 t11 0" fill="none" stroke="#b3a45c" stroke-width="1.6"/></pattern>' +
-    '<pattern id="pt-film" width="40" height="40" patternUnits="userSpaceOnUse"><rect width="40" height="40" fill="#f6f7f8"/><path d="M0 20h40" stroke="#9fb6c9" stroke-width="1"/><text x="3" y="14" font-size="7" fill="#7f9bb3" font-family="Inter">ИЗОСПАН</text></pattern>' +
-    '<pattern id="pt-vapor" width="30" height="30" patternUnits="userSpaceOnUse"><rect width="30" height="30" fill="#9fb3c4" fill-opacity=".85"/><path d="M0 30L30 0" stroke="#8aa0b3" stroke-width="1"/></pattern>' +
-    '<linearGradient id="gr-log" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d9b88a"/><stop offset=".55" stop-color="#c6a273"/><stop offset="1" stop-color="#9c7a50"/></linearGradient>' +
-    '<pattern id="pt-log" width="196" height="26" patternUnits="userSpaceOnUse"><rect width="196" height="26" fill="url(#gr-log)"/><rect y="24.6" width="196" height="1.4" fill="#7d5f3c"/></pattern>' +
-    '</defs>';
-  let out = defs;
-  LAYERS.forEach((L, i) => {
-    const ox = 40 + i * 50, oy = 92 + i * 12;
-    let body = '';
-    if (i === 0) body = '<rect width="' + W + '" height="' + HH + '" fill="url(#pt-board)"/>';
-    if (i === 1) body = '<rect width="' + W + '" height="' + HH + '" fill="url(#pt-vapor)"/>';
-    if (i === 2) { body = '<rect width="' + W + '" height="' + HH + '" fill="url(#pt-wool)"/>'; for (let x = 0; x < W; x += 58) body += '<rect x="' + x + '" width="12" height="' + HH + '" fill="#d8b98a" stroke="#a8875c" stroke-width="1"/>'; }
-    if (i === 3) body = '<rect width="' + W + '" height="' + HH + '" fill="url(#pt-film)"/>';
-    if (i === 4) { body = '<rect width="' + W + '" height="' + HH + '" fill="rgba(243,236,225,.06)" stroke="rgba(243,236,225,.25)" stroke-dasharray="4 4"/>'; for (let x = 8; x < W; x += 58) body += '<rect x="' + x + '" width="10" height="' + HH + '" fill="#cfae7f" stroke="#a8875c" stroke-width="1"/>'; }
-    if (i === 5) body = '<rect width="' + W + '" height="' + HH + '" fill="url(#pt-log)"/>';
-    out += '<g class="ly" data-i="' + i + '"><g transform="translate(' + ox + ' ' + oy + ') skewY(-14)">' + body +
-      '<rect width="' + W + '" height="' + HH + '" fill="none" stroke="rgba(0,0,0,.25)"/>' +
-      '<circle cx="18" cy="20" r="11" fill="#3B2A1F" stroke="#C6A273" stroke-width="1.5"/><text x="18" y="24.5" text-anchor="middle" font-size="12" font-weight="700">' + (i + 1) + '</text></g></g>';
-  });
-  out += '<text x="40" y="396" fill-opacity=".6">внутри</text><text x="520" y="396" text-anchor="end" fill-opacity=".6">снаружи</text>' +
-    '<path d="M92 391 H452" stroke="rgba(243,236,225,.35)" stroke-width="1.2" marker-end="url(#ar)"/>';
-  out = out.replace('</defs>', '<marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="rgba(243,236,225,.5)"/></marker></defs>');
-  svg.innerHTML = out;
+  const pic = $('#wallpic'), list = $('#wall-list');
+  pic.innerHTML = '<div class="wimg"><img src="media/wall.jpg" alt="Разрез стены каркасного дома" loading="lazy">' +
+    LAYERS.map((L, i) => '<button class="wdot" data-i="' + i + '" style="left:' + L[2] + '%;top:' + L[3] + '%" aria-label="' + L[0] + '">' + (i + 1) + '</button>').join('') + '</div>' +
+    '<div class="wside"><span>← внутри</span><span>снаружи →</span></div>';
   list.innerHTML = LAYERS.map((L, i) => '<button class="wl" data-i="' + i + '"><i>' + (i + 1) + '</i><b>' + L[0] + '</b><span>' + L[1] + '</span></button>').join('');
   const set = i => {
-    svg.classList.toggle('act', i !== null);
-    $$('.ly', svg).forEach(g => g.classList.toggle('on', +g.dataset.i === i));
+    $$('.wdot', pic).forEach(b => b.classList.toggle('on', +b.dataset.i === i));
     $$('.wl', list).forEach(b => b.classList.toggle('on', +b.dataset.i === i));
   };
-  svg.addEventListener('click', e => { const g = e.target.closest('.ly'); if (g) set(+g.dataset.i); });
+  pic.addEventListener('click', e => { const g = e.target.closest('.wdot'); if (g) set(+g.dataset.i); });
   list.addEventListener('click', e => { const b = e.target.closest('.wl'); if (b) set(+b.dataset.i); });
-  set(2);
+  set(3);
 })();
 
 /* ==========================================================
@@ -429,14 +459,28 @@ const Q = [
 ];
 const QA = [], qmain = $('#qmain');
 let qi = 0;
-function qScore(h) {
-  let s = 0; const [pu, fl, bd, bu] = QA;
-  if (fl && fl !== 'any') s += String(h.floors) === fl ? 3 : -3;
-  if (bd !== undefined) { const b = +bd; if (b === 3 ? h.bedrooms >= 3 : h.bedrooms === b) s += 4; else if (Math.abs(h.bedrooms - b) === 1) s += 1; }
-  const p = h.price[0], R = { a: [0, 2.5e6], b: [2.5e6, 3.5e6], c: [3.5e6, 5e6], d: [5e6, 1e9] }[bu];
-  if (R) s += (p >= R[0] && p <= R[1]) ? 4 : (p < R[0] ? 1 : -2);
-  if (pu === 'p') s += h.area >= 55 ? 2 : 0; else if (pu) s += h.area <= 50 ? 2 : 0;
-  return s;
+/* подбор: этажность строго, затем спальни, затем бюджет. Показываем все подходящие, а если точных нет, ближайшие */
+const QB = { a: [0, 2.5e6], b: [2.5e6, 3.5e6], c: [3.5e6, 5e6], d: [5e6, 1e12] };
+function qPick() {
+  const [pu, fl, bd, bu] = QA;
+  let pool = H.slice(), exact = true;
+  if (fl === '1' || fl === '2') pool = pool.filter(h => String(h.floors) === fl);
+  if (bd !== undefined) {
+    const b = +bd, ok = h => b === 3 ? h.bedrooms >= 3 : h.bedrooms === b;
+    const m = pool.filter(ok);
+    if (m.length) pool = m;
+    else { exact = false; const dist = h => Math.abs(Math.min(h.bedrooms, 3) - b), md = Math.min.apply(null, pool.map(dist)); pool = pool.filter(h => dist(h) === md); }
+  }
+  const R = QB[bu];
+  if (R) {
+    const gap = h => { const p = h.price[0]; return p < R[0] ? R[0] - p : p > R[1] ? p - R[1] : 0; };
+    const m = pool.filter(h => gap(h) === 0);
+    if (m.length) pool = m;
+    else { exact = false; pool.sort((x, y) => gap(x) - gap(y)); pool = pool.slice(0, 3); }
+  }
+  const pref = h => pu === 'p' ? -h.area : (pu ? h.area : 0);
+  pool.sort((x, y) => pref(x) - pref(y) || x.price[0] - y.price[0]);
+  return { list: pool.slice(0, 6), exact: exact };
 }
 function qRender() {
   $('#qbar').style.width = (qi / Q.length * 100) + '%';
@@ -448,9 +492,9 @@ function qRender() {
     $$('.qopt', qmain).forEach(b => b.addEventListener('click', () => { QA[qi] = b.dataset.v; $$('.qopt', qmain).forEach(x => x.classList.toggle('on', x === b)); setTimeout(() => { qi++; qRender(); }, 220); }));
   } else {
     $('#qstep').textContent = 'Готово! Осталось оставить контакты';
-    const top = H.map(h => [h, qScore(h)]).sort((a, b) => b[1] - a[1]).slice(0, 3).map(x => x[0]);
+    const pick = qPick(), top = pick.list;
     const answers = Q.map((q, i) => q[0] + ' ' + ((q[1].find(o => o[0] === QA[i]) || [, ''])[1])).join('; ');
-    qmain.innerHTML = '<h3>Вам подойдут эти проекты</h3><div class="qres">' + top.map(h => '<a data-id="' + h.id + '"><img src="' + img(h, 'thumb') + '" alt=""><span>' + h.name + '<small>' + h.area + ' м² · от ' + mln(h.price[0]) + '</small></span></a>').join('') + '</div>' +
+    qmain.innerHTML = '<h3>' + (pick.exact ? (top.length === 1 ? 'Вам подойдёт этот проект' : 'Вам подойдут эти проекты') : 'Точного совпадения нет, вот самые близкие проекты') + '</h3>' + (pick.exact ? '' : '<p class="muted qnote">Любой из них можем доработать под ваши пожелания.</p>') + '<div class="qres">' + top.map(h => '<a data-id="' + h.id + '"><img src="' + img(h, 'thumb') + '" alt=""><span>' + h.name + '<small>' + h.area + ' м² · от ' + mln(h.price[0]) + '</small></span></a>').join('') + '</div>' +
       '<form class="form" data-form data-topic="Квиз. ' + esc(answers) + '. Подобрано: ' + top.map(h => h.name).join(', ') + '">' +
       '<p class="muted">Оставьте телефон: пришлём подборку со сметами и ответим на вопросы.</p>' +
       '<input name="name" placeholder="Ваше имя" autocomplete="name" required><input name="phone" type="tel" placeholder="+7 (___) ___-__-__" autocomplete="tel" required>' +
