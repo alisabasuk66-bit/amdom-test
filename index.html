@@ -13,7 +13,7 @@
 <meta property="og:image" content="media/poster.jpg">
 <link rel="icon" type="image/png" href="media/favicon.png">
 <link rel="preload" href="fonts/InterDisplay-ExtraBold.woff" as="font" type="font/woff" crossorigin>
-<link rel="stylesheet" href="css/style.css?v=9">
+<link rel="stylesheet" href="css/style.css?v=12">
 </head>
 <body>
 
@@ -258,21 +258,21 @@
         <div class="eyebrow">Ипотека</div>
         <h2>Ежемесячный платёж</h2>
       </div>
-      <p>Посчитайте примерный платёж по ипотеке на строительство дома.</p>
+      <p>Посчитайте примерный платёж по ипотеке на строительство дома. Цифры можно двигать ползунком или вписать вручную.</p>
     </div>
     <div class="mort">
       <div class="mort-form">
         <div class="seg" id="m-prog"></div>
         <div class="rng">
-          <div class="rng-top"><label for="m-sum">Стоимость дома</label><output id="m-sum-o"></output></div>
-          <input type="range" id="m-sum" min="1000000" max="10000000" step="10000">
+          <div class="rng-top"><label for="m-sum-o">Стоимость дома</label><span class="num"><input id="m-sum-o" class="ninp" inputmode="numeric" autocomplete="off"><i>₽</i></span></div>
+          <input type="range" id="m-sum" min="1000000" max="15000000" step="10000">
         </div>
         <div class="rng">
-          <div class="rng-top"><label for="m-down">Первый взнос</label><output id="m-down-o"></output></div>
-          <input type="range" id="m-down" min="20" max="90" step="1">
+          <div class="rng-top"><label for="m-down-o">Первый взнос</label><span class="num"><input id="m-down-o" class="ninp" inputmode="numeric" autocomplete="off"><i>₽</i><em id="m-down-p"></em></span></div>
+          <input type="range" id="m-down" min="20" max="90" step="0.1">
         </div>
         <div class="rng">
-          <div class="rng-top"><label for="m-years">Срок</label><output id="m-years-o"></output></div>
+          <div class="rng-top"><label for="m-years-o">Срок</label><span class="num"><input id="m-years-o" class="ninp sm" inputmode="numeric" autocomplete="off"><i id="m-years-u">лет</i></span></div>
           <input type="range" id="m-years" min="1" max="30" step="1">
         </div>
       </div>
@@ -337,7 +337,7 @@
 <section class="sec paper" id="custom">
   <div class="wrap">
     <div class="custom">
-      <div class="custom-img"><img src="img/houses/04_gran/r2.jpg" alt="Дом АМ Грань" loading="lazy"></div>
+      <div class="custom-img"><img src="img/custom.jpg" alt="Каркасный дом АМ ДОМ: от чертежа до готового дома" loading="lazy"></div>
       <div class="custom-txt">
         <div class="eyebrow">Индивидуальный проект</div>
         <h2>Не нашли подходящий дом?</h2>
@@ -352,11 +352,17 @@
   </div>
 </section>
 
-<!-- =============== ОТЗЫВЫ (скрыты, пока нет настоящих) =============== -->
-<section class="sec" id="reviews" hidden>
+<!-- =============== ОТЗЫВЫ: скриншоты переписок с клиентами =============== -->
+<section class="sec paper" id="reviews">
   <div class="wrap">
-    <div class="head"><div><div class="eyebrow">Отзывы</div><h2>Что говорят хозяева домов</h2></div></div>
-    <div class="reviews" id="revlist"></div>
+    <div class="head">
+      <div><div class="eyebrow">Отзывы</div><h2>Что пишут наши клиенты</h2></div>
+      <p>Настоящие сообщения от людей, которым мы построили дом. Нажмите на отзыв, чтобы прочитать его целиком.</p>
+    </div>
+    <div class="rvwrap">
+      <div class="rvtrk" id="revlist"></div>
+      <button class="onav p" aria-label="Назад">‹</button><button class="onav n" aria-label="Вперёд">›</button>
+    </div>
   </div>
 </section>
 
@@ -379,6 +385,7 @@
           <li><span>Телефон</span><a data-phone href="#"></a></li>
           <li><span>Почта</span><a data-email href="#"></a></li>
           <li><span>Офис</span><a data-map target="_blank" rel="noopener"></a></li>
+          <li><span>Режим работы</span><div class="hours" data-hours></div></li>
         </ul>
         <div class="msg">
           <a class="mbtn tg" data-tg target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M21.5 3.6L2.9 10.8c-1.3.5-1.2 1.2-.2 1.5l4.8 1.5 1.8 5.6c.2.6.4.8.9.8.4 0 .6-.2.9-.4l2.3-2.2 4.7 3.5c.9.5 1.5.2 1.7-.8l3.1-14.6c.3-1.3-.5-1.9-1.4-1.6zM9.2 13.4l9.2-5.8c.4-.3.8-.1.5.2l-7.9 7.1-.3 3.3z"/></svg>Telegram</a>
@@ -402,6 +409,7 @@
         <button class="btn" type="submit"><span class="dot"></span>Отправить заявку</button>
       </form>
     </div>
+    <div class="map" id="map"><a class="map-open" data-maplink target="_blank" rel="noopener">Открыть в Яндекс Картах</a></div>
   </div>
 </section>
 </main>
@@ -476,7 +484,7 @@
   <button class="btn" id="cookie-ok">Хорошо</button>
 </div>
 
-<script src="js/data.js?v=8"></script>
-<script src="js/app.js?v=8"></script>
+<script src="js/data.js?v=10"></script>
+<script src="js/app.js?v=10"></script>
 </body>
 </html>

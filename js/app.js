@@ -27,6 +27,14 @@ $$('[data-vk]').forEach(a => soon(a, C.vk, 'Сообщество ВКонтак�
 $$('[data-avito]').forEach(a => { if (C.avito) { a.href = C.avito; a.hidden = false; } });
 $$('[data-legal]').forEach(e => e.textContent = S.legal.name);
 $$('[data-inn]').forEach(e => e.textContent = S.legal.inn);
+$$('[data-maplink]').forEach(a => { a.href = C.mapUrl; });
+$$('[data-hours]').forEach(e => { e.innerHTML = (S.hours || []).map(t => '<div>' + esc(t) + '</div>').join(''); });
+/* карта грузится, только когда до неё долистали: так сайт открывается быстрее */
+(function map() {
+  const box = $('#map'); if (!box || !S.mapEmbed) return;
+  const load = () => { if (box.dataset.on) return; box.dataset.on = 1; const f = document.createElement('iframe'); f.src = S.mapEmbed; f.title = 'Офис АМ ДОМ на карте'; f.loading = 'lazy'; f.setAttribute('allowfullscreen', ''); box.prepend(f); };
+  if ('IntersectionObserver' in window) { const o = new IntersectionObserver(es => { if (es.some(x => x.isIntersecting)) { load(); o.disconnect(); } }, { rootMargin: '600px' }); o.observe(box); } else load();
+})();
 
 /* ---------- шапка и меню ---------- */
 const topbar = $('#top'), burger = $('#burger'), build = $('#build');
@@ -135,6 +143,20 @@ if (small) {
   fetch(VSRC).then(r => { if (!r.ok) throw 0; return r.blob(); })
     .then(b => { vid.src = URL.createObjectURL(b); })
     .catch(() => { vid.src = VSRC; });
+  /* Пока ролик грузится (на медленном интернете это несколько секунд), показываем лёгкие кадры стройки,
+     чтобы дом собирался сразу, а не стояла одна первая картинка. Когда ролик готов, кадры прячем. */
+  const PF = 8, cv = document.createElement('canvas'), pre = [];
+  cv.className = 'pre'; cv.width = 720; cv.height = 406;
+  vid.after(cv);
+  const pctx = cv.getContext('2d'); let pshown = -1, vReady = false;
+  for (let i = 0; i < 81; i += 4) { const im = new Image(); im.onload = () => { im.done = true; }; im.src = 'media/frames/f' + String(i + 1).padStart(3, '0') + '.jpg'; pre[i] = im; }
+  const preDraw = t => {
+    let k = Math.min(80, Math.round(t * PF / 4) * 4);
+    while (k > 0 && !(pre[k] && pre[k].done)) k -= 4;
+    if (k !== pshown && pre[k] && pre[k].done) { pctx.drawImage(pre[k], 0, 0, cv.width, cv.height); pshown = k; }
+  };
+  const ready = () => { if (vReady || !vid.src) return; vReady = true; cv.classList.add('off'); };
+  vid.addEventListener('loadeddata', ready); vid.addEventListener('canplay', ready);
   // Доли прокрутки: 0–0.06 заголовок, 0.06–0.80 стройка, 0.80–0.92 вечер, дальше финал
   const onScroll = () => {
     const r = build.getBoundingClientRect(), total = build.offsetHeight - innerHeight;
@@ -156,6 +178,7 @@ if (small) {
       cur += (target - cur) * 0.18;
       if (Math.abs(target - cur) < 0.004) cur = target;
       if (vid.readyState >= 1 && Math.abs(vid.currentTime - cur) > 0.02) { try { vid.currentTime = cur; } catch (e) {} }
+      if (!vReady) preDraw(cur);
       setStage(cur);
     }
     requestAnimationFrame(tick);
@@ -370,14 +393,14 @@ const LAYERS = [
   ['Внутренняя отделка', 'На выбор: ГКЛ 12 мм, имитация бруса или вагонка.', 53, 11],
   ['Контррейки', 'Обрешётка стен для крепления внутренней отделки.', 69.5, 5],
   ['Пароизоляционная плёнка', 'Не пускает влагу из дома в утеплитель. Стыки проклеены лентой.', 56, 17.5],
-  ['Каркас и утеплитель', 'Сухая строганая доска с шагом 590 мм, между стойками каменная вата. Не горит и не оседает.', 25, 34],
-  ['Плёнка гидро-ветрозащитная', 'Защищает утеплитель от ветра и воды, но выпускает пар наружу.', 38, 44],
+  ['Каркас и утеплитель', 'Сухая строганая доска с шагом 590 мм, между стойками каменная вата. Не горит и не оседает.', 40, 36],
+  ['Плёнка гидро-ветрозащитная', 'Защищает утеплитель от ветра и воды, но выпускает пар наружу.', 31, 47],
   ['Вентзазор', 'Контробрешётка создаёт зазор, по которому уходит влага. Стена всегда сухая.', 85, 34.5],
   ['Наружная отделка', 'На выбор: сайдинг, имитация бруса, OSB, фасадная плитка Hauberg.', 62, 68]
 ];
 (function wall() {
   const pic = $('#wallpic'), list = $('#wall-list');
-  pic.innerHTML = '<div class="wimg"><img src="media/wall.jpg" alt="Разрез стены каркасного дома" loading="lazy">' +
+  pic.innerHTML = '<div class="wimg"><img src="media/wall.jpg?v=2" alt="Разрез стены каркасного дома" loading="lazy">' +
     LAYERS.map((L, i) => '<button class="wdot" data-i="' + i + '" style="left:' + L[2] + '%;top:' + L[3] + '%" aria-label="' + L[0] + '">' + (i + 1) + '</button>').join('') + '</div>' +
     '<div class="wside"><span>← внутри</span><span>снаружи →</span></div>';
   list.innerHTML = LAYERS.map((L, i) => '<button class="wl" data-i="' + i + '"><i>' + (i + 1) + '</i><b>' + L[0] + '</b><span>' + L[1] + '</span></button>').join('');
@@ -415,7 +438,7 @@ $('#c-lead').addEventListener('click', () => {
   const h = byId(cHouse.value), pi = +$('input[name=cpk]:checked').value, fi = +$('input[name=cfd]:checked').value;
   openLead('Калькулятор: ' + h.name + ', ' + S.packages[pi].name + ', ' + S.foundations[fi].name + ', ' + rub(calcPrice), 'Точная смета', h.name + ', ' + S.packages[pi].name.toLowerCase() + ' комплектация, от ' + rub(calcPrice) + '. Посчитаем точно под ваш участок.');
 });
-$('#c-tomort').addEventListener('click', () => { mSum.value = Math.min(+mSum.max, calcPrice); mort(); });
+$('#c-tomort').addEventListener('click', () => { M.sum = Math.min(+mSum.max, calcPrice); mort(); });
 
 /* ==========================================================
    ИПОТЕКА
@@ -424,22 +447,46 @@ const mProg = $('#m-prog'), mSum = $('#m-sum'), mDown = $('#m-down'), mYears = $
 mProg.innerHTML = S.mortgage.map((m, i) => '<label><input type="radio" name="mpg" value="' + i + '"' + (i ? '' : ' checked') + '><span><b>' + m.name + '</b><small>от ' + String(m.rate).replace('.', ',') + '%</small></span></label>').join('');
 mSum.value = calcPrice || 3000000; mDown.value = 20; mYears.value = 20;
 const fill = el => el.style.setProperty('--p', ((el.value - el.min) / (el.max - el.min) * 100) + '%');
+/* значения можно менять ползунком или вписать цифрами вручную */
+const M = { sum: +mSum.value, dp: +mDown.value, y: +mYears.value };
+const mSumO = $('#m-sum-o'), mDownO = $('#m-down-o'), mYearsO = $('#m-years-o');
+const grp = n => Math.round(n).toLocaleString('ru-RU').replace(/,/g, ' ');
+const digits = v => +String(v).replace(/[^0-9]/g, '') || 0;
 function mort() {
   const pr = S.mortgage[+$('input[name=mpg]:checked').value];
-  mDown.min = pr.minDown; if (+mDown.value < pr.minDown) mDown.value = pr.minDown;
-  const sum = +mSum.value, dp = +mDown.value, y = +mYears.value;
+  mDown.min = pr.minDown; if (M.dp < pr.minDown) M.dp = pr.minDown;
+  mSum.value = M.sum; mDown.value = M.dp; mYears.value = M.y;
+  const sum = M.sum, dp = M.dp, y = M.y;
   const loan = sum * (1 - dp / 100), n = y * 12, r = pr.rate / 1200;
   const pay = r ? loan * r / (1 - Math.pow(1 + r, -n)) : loan / n;
-  $('#m-sum-o').textContent = rub(sum);
-  $('#m-down-o').textContent = rub(sum * dp / 100) + ' · ' + dp + '%';
-  $('#m-years-o').textContent = y + ' ' + plural(y, 'год', 'года', 'лет');
+  if (document.activeElement !== mSumO) mSumO.value = grp(sum);
+  if (document.activeElement !== mDownO) mDownO.value = grp(sum * dp / 100);
+  if (document.activeElement !== mYearsO) mYearsO.value = y;
+  $('#m-down-p').textContent = '· ' + String(Math.round(dp * 10) / 10).replace('.', ',') + '%';
+  $('#m-years-u').textContent = plural(y, 'год', 'года', 'лет');
   $('#m-pay').textContent = rub(pay);
   $('#m-loan').textContent = rub(loan);
   $('#m-rate').textContent = String(pr.rate).replace('.', ',') + '%';
   $('#m-over').textContent = rub(Math.max(0, pay * n - loan));
   [mSum, mDown, mYears].forEach(fill);
 }
-[mSum, mDown, mYears].forEach(el => el.addEventListener('input', mort));
+mSum.addEventListener('input', () => { M.sum = +mSum.value; mort(); });
+mDown.addEventListener('input', () => { M.dp = +mDown.value; mort(); });
+mYears.addEventListener('input', () => { M.y = +mYears.value; mort(); });
+const lim = (v, a, b) => Math.min(b, Math.max(a, v));
+const typed = (inp, apply) => {
+  let fresh = false;
+  inp.addEventListener('focus', () => { inp.value = String(inp.value).replace(/\s/g, ''); inp.select(); fresh = true; });
+  inp.addEventListener('mouseup', e => { if (fresh) { e.preventDefault(); inp.select(); fresh = false; } });
+  inp.addEventListener('input', () => { inp.value = inp.value.replace(/[^0-9]/g, ''); });
+  const commit = () => { if (inp.value !== '') apply(digits(inp.value)); inp.blur(); mort(); };
+  inp.addEventListener('change', commit);
+  inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); commit(); } });
+  inp.addEventListener('blur', () => mort());
+};
+typed(mSumO, v => { M.sum = lim(v, +mSum.min, +mSum.max); });
+typed(mDownO, v => { const pr = S.mortgage[+$('input[name=mpg]:checked').value]; M.dp = lim(v / M.sum * 100, pr.minDown, 90); });
+typed(mYearsO, v => { M.y = lim(v, 1, 30); });
 mProg.addEventListener('change', mort);
 mort();
 $('#m-lead').addEventListener('click', () => {
@@ -512,10 +559,28 @@ qRender();
 $('#faqlist').innerHTML = S.faq.map(g => '<div class="faqg"><h3>' + esc(g[0]) + '</h3>' + g[1].map(f => '<details><summary>' + esc(f[0]) + '</summary><p>' + esc(f[1]) + '</p></details>').join('') + '</div>').join('');
 
 /* ---------- отзывы и цифры (показываются, только если заполнены) ---------- */
-if (S.reviews && S.reviews.length) {
-  $('#reviews').hidden = false;
-  $('#revlist').innerHTML = S.reviews.map(r => '<div class="rv"><p>' + esc(r.text) + '</p><b>' + esc(r.name) + '</b><small>' + esc(r.house || '') + '</small></div>').join('');
-}
+/* отзывы скриншотами: пока скринов нет, показываем пустые рамки */
+(function reviews() {
+  const trk = $('#revlist'); if (!trk) return;
+  const R = S.reviewShots || [];
+  if (R.length) {
+    trk.innerHTML = R.map((r, i) => '<figure class="rvc"><button class="rvph" data-i="' + i + '" aria-label="Открыть отзыв ' + esc(r.name || '') + '"><img src="' + r.img + '" alt="Отзыв ' + esc(r.name || 'клиента') + '" loading="lazy"></button><figcaption><b>' + esc(r.name || '') + '</b>' + (r.house ? '<small>' + esc(r.house) + '</small>' : '') + '</figcaption></figure>').join('');
+  } else {
+    trk.innerHTML = [0, 1, 2, 3, 4].map(() => '<figure class="rvc empty"><div class="rvph"><div class="rvbar"></div><div class="rvb l"></div><div class="rvb r"></div><div class="rvb l s"></div><p>Скоро здесь<br>будет отзыв</p></div><figcaption><b>Имя клиента</b><small>Дом из каталога</small></figcaption></figure>').join('');
+  }
+  const wrap = trk.parentElement, step = () => Math.max(trk.clientWidth * 0.8, 240);
+  $('.onav.p', wrap).addEventListener('click', () => trk.scrollBy({ left: -step(), behavior: 'smooth' }));
+  $('.onav.n', wrap).addEventListener('click', () => trk.scrollBy({ left: step(), behavior: 'smooth' }));
+  trk.addEventListener('click', e => {
+    const b = e.target.closest('button.rvph'); if (!b) return;
+    const z = document.createElement('div'); z.className = 'lb';
+    z.innerHTML = '<img src="' + R[+b.dataset.i].img + '" alt=""><button class="lbx" aria-label="Закрыть">×</button>';
+    const close = () => { z.remove(); document.body.classList.remove('lock'); removeEventListener('keydown', k); };
+    const k = e2 => { if (e2.key === 'Escape') close(); };
+    z.addEventListener('click', e2 => { if (e2.target.tagName !== 'IMG') close(); });
+    addEventListener('keydown', k); document.body.appendChild(z); document.body.classList.add('lock');
+  });
+})();
 if (S.stats && S.stats.length) {
   $('#stats').hidden = false;
   $('#stats').innerHTML = S.stats.map(s => '<div><b>' + esc(s[0]) + '</b>' + esc(s[1]) + '</div>').join('');
