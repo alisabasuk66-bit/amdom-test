@@ -365,6 +365,7 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;bac
 .steps b{font-family:'Inter Display';font-weight:800;font-size:44px;color:var(--brus);line-height:1}
 .steps h3{font-size:22px;margin:14px 0 8px}
 .steps p{font-size:15px;line-height:1.55;color:var(--muted)}
+.ftabs,.fnav{display:none}
 
 /* ---------- квиз ---------- */
 .quiz{display:grid;grid-template-columns:.85fr 1.15fr;border-radius:24px;overflow:hidden;background:var(--paper);border:1px solid var(--line);min-height:520px}
@@ -528,6 +529,22 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;bac
 
 /* ---------- телефон ---------- */
 @media (max-width:760px){
+  .wdot{width:26px;height:26px;font-size:12px;border-width:1.5px}
+  /* этапы в папке */
+  .ftabs{display:flex;gap:4px;padding:0 10px;position:relative;z-index:2}
+  .ftab{flex:1;height:40px;border-radius:12px 12px 0 0;background:#e6dccd;color:var(--muted);font-family:'Inter Display';font-weight:800;font-size:15px;position:relative;top:1px;transition:background .2s,color .2s,height .2s;margin-top:6px}
+  .ftab.on{background:#fff;color:var(--brus);height:46px;margin-top:0;box-shadow:0 -4px 12px rgba(59,42,31,.06)}
+  .steps.folder{display:block;position:relative;background:#fff;border-radius:18px;padding:0;box-shadow:0 14px 30px rgba(59,42,31,.1);display:grid}
+  .steps.folder:before,.steps.folder:after{content:"";position:absolute;left:10px;right:10px;bottom:-7px;height:20px;background:#fff;border-radius:0 0 16px 16px;z-index:-1;box-shadow:0 6px 14px rgba(59,42,31,.08)}
+  .steps.folder:after{left:20px;right:20px;bottom:-14px;background:#f4ede3}
+  .steps.folder li{grid-area:1/1;visibility:hidden;opacity:0;background:transparent!important;padding:22px 22px 20px}
+  .steps.folder li.on{visibility:visible;opacity:1;animation:fin .35s ease}
+  .steps.folder b{font-size:30px}
+  .steps.folder h3{margin:8px 0 6px}
+  .fnav{display:flex;align-items:center;justify-content:center;gap:18px;margin-top:26px}
+  .fnav button{width:42px;height:42px;border-radius:50%;background:var(--kofe);color:var(--slivki);font-size:22px;display:grid;place-items:center}
+  .fnav .fc{font-weight:600;color:var(--muted);font-size:14px;min-width:44px;text-align:center}
+  @keyframes fin{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:none}}
   .why{gap:12px}
   .wi{display:grid;grid-template-columns:36px 1fr;column-gap:14px;row-gap:4px;align-items:center;padding:18px 20px}
   .wi svg{width:36px;height:36px;margin:0;display:block}

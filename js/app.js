@@ -390,9 +390,9 @@ renderPack(0);
    ТЕХНОЛОГИЯ: разрез стены
    ========================================================== */
 const LAYERS = [
-  ['Внутренняя отделка', 'На выбор: ГКЛ 12 мм, имитация бруса или вагонка.', 53, 11],
+  ['Внутренняя отделка', 'На выбор: ГКЛ 12 мм, имитация бруса или вагонка.', 52, 9],
   ['Контррейки', 'Обрешётка стен для крепления внутренней отделки.', 69.5, 5],
-  ['Пароизоляционная плёнка', 'Не пускает влагу из дома в утеплитель. Стыки проклеены лентой.', 56, 17.5],
+  ['Пароизоляционная плёнка', 'Не пускает влагу из дома в утеплитель. Стыки проклеены лентой.', 57, 19],
   ['Каркас и утеплитель', 'Сухая строганая доска с шагом 590 мм, между стойками каменная вата. Не горит и не оседает.', 40, 36],
   ['Плёнка гидро-ветрозащитная', 'Защищает утеплитель от ветра и воды, но выпускает пар наружу.', 31, 47],
   ['Вентзазор', 'Контробрешётка создаёт зазор, по которому уходит влага. Стена всегда сухая.', 85, 34.5],
@@ -411,6 +411,32 @@ const LAYERS = [
   pic.addEventListener('click', e => { const g = e.target.closest('.wdot'); if (g) set(+g.dataset.i); });
   list.addEventListener('click', e => { const b = e.target.closest('.wl'); if (b) set(+b.dataset.i); });
   set(3);
+})();
+
+/* ---------- «Как мы работаем»: на телефоне этапы лежат в папке с закладками ---------- */
+(function stepsFolder() {
+  const ol = $('.steps'); if (!ol) return;
+  const li = $$('li', ol), n = li.length;
+  const tabs = document.createElement('div'); tabs.className = 'ftabs';
+  tabs.innerHTML = li.map((l, i) => '<button class="ftab' + (i ? '' : ' on') + '" data-i="' + i + '" aria-label="Этап ' + (i + 1) + '">' + $('b', l).textContent + '</button>').join('');
+  const nav = document.createElement('div'); nav.className = 'fnav';
+  nav.innerHTML = '<button class="fp" aria-label="Предыдущий этап">‹</button><span class="fc">1 / ' + n + '</span><button class="fn" aria-label="Следующий этап">›</button>';
+  ol.before(tabs); ol.after(nav); ol.classList.add('folder');
+  let cur = 0;
+  const go = i => {
+    cur = (i + n) % n;
+    li.forEach((l, k) => l.classList.toggle('on', k === cur));
+    $$('.ftab', tabs).forEach((t, k) => t.classList.toggle('on', k === cur));
+    $('.fc', nav).textContent = (cur + 1) + ' / ' + n;
+    ol.classList.toggle('first', cur === 0);
+  };
+  tabs.addEventListener('click', e => { const t = e.target.closest('.ftab'); if (t) go(+t.dataset.i); });
+  $('.fp', nav).addEventListener('click', () => go(cur - 1));
+  $('.fn', nav).addEventListener('click', () => go(cur + 1));
+  let tx = null;
+  ol.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive: true });
+  ol.addEventListener('touchend', e => { if (tx === null) return; const d = e.changedTouches[0].clientX - tx; if (Math.abs(d) > 40) go(cur + (d < 0 ? 1 : -1)); tx = null; });
+  go(0);
 })();
 
 /* ==========================================================
